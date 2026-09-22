@@ -19,6 +19,8 @@ Settings → Apps → Installed apps → search **OMEN Gaming Hub** → Uninstal
 - **Basis**: the Case-B leak source was OGH's background process polling the GPU at a fixed cadence (measured: the system's sole `nvml.dll` consumer; the leak stopped when it stopped — see doc 03). Uninstalling is the most thorough way to stop it.
 - This step assumes you don't need OGH's other features; if you do, review the alternatives in §5 first.
 
+> **A note on OMEN Light Studio** (the RGB control app, same component family as OGH). It was **not** part of the kernel-pool leaks — neither `RTLF` nor `NVRM` traces back to it. The author removed it for a **user-mode CPU** reason: its two background processes (`LightStudioHelper`, `LightStudio-background`, 64 threads combined) run at all times and had accumulated 2,934 s and 2,345 s of CPU time respectively — while lighting only needs the app while you're configuring it. If your lighting is already set and you won't touch it again, you can uninstall it too (same path, search "OMEN Light Studio"); effects already saved to the hardware/driver survive removing the controller.
+
 ---
 
 ## 3. Step 2: remove the leftover rtf64 driver (OGH's uninstaller won't)
