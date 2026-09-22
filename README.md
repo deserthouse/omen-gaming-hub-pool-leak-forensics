@@ -1,6 +1,6 @@
 # OMEN Gaming Hub Pool-Leak Forensics
 
-> **Two independent Windows nonpaged-pool leaks that ate gigabytes while Task Manager showed nothing — full evidence chains for a polling-caller leak and an orphan-driver leak, plus a big-looking tag that wasn't a leak at all.**
+> **Two nonpaged-pool leaks that quietly ate gigabytes while Task Manager showed nothing — both traced to a single entry point: OMEN Gaming Hub. One comes from a driver it installs and never removes; the other from its own background polling hammering the NVIDIA kernel driver. Plus one big-looking tag that wasn't a leak at all.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
