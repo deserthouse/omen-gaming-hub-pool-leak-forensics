@@ -41,7 +41,7 @@
 
 第三个标签 `ismc`（317 MB）被证明**不是泄漏**。它同样被收录（见 04），因为它的释放率为 0%、比真正的泄漏更"像"泄漏——不收录这个反例，释放率判据会把它误判进去。
 
-**基础流程不重复造轮子**：池标签排查的标准流程见微软官方文档 [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) 与 [PoolMonX](https://github.com/zodiacon/PoolMonX)。本仓库只讲**官方教程没讲的**：什么时候会误判、用什么判据避免。
+**标准流程不在此重复**：池标签排查的标准做法见微软官方文档 [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) 与 [PoolMonX](https://github.com/zodiacon/PoolMonX)。本仓库只写**官方教程没讲的**：什么时候会误判、用什么判据避免。
 
 ---
 
@@ -78,6 +78,8 @@ python scripts/pooltag.py snapshot.json
 | 8 | `rtf64` 服务不随 OGH 卸载而消失（独立 SCM 服务，`StartType=1` 系统启动即加载） | oem43.inf 服务段 | ✅ 实测 |
 | 9 | 设备 `\Device\RTF64` 的 DACL 允许 Everyone 读写 | 处置前会话观察（**未落盘**，复验方法已附） | ⚠️ 历史观察 |
 | 10 | `ismc` 317 MB 为静态持有（3 次分配 0 释放，**不随时间增长**），非泄漏 | 双时点快照对比 | ✅ 实测 |
+
+**一段话总结**：两个泄漏源都已定位并处置——`RTLF`（530 MB）是 OGH 捆绑安装、卸载不带走、无人调用也在泄漏的网络过滤器驱动；`NVRM`（71 小时累积 1.77 GB）是 OGH 后台监控高频轮询 NVIDIA 驱动所致。修复 = 卸载 OGH + 手动禁用 rtf64 驱动 + 重启，见 [05 修复指南](docs/05-remediation-and-alternatives.md)；第三个大块 `ismc`（317 MB）不是泄漏，不要动。
 
 ---
 
