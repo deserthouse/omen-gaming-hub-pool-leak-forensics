@@ -10,7 +10,7 @@
 
 `ismc` held **317 MB**, perennially #3 in the Top list. **3** allocations, **0** frees — by the free-rate criterion (0% < 50%) "near-confirmed"?
 
-**Not so fast.**
+**Not yet conclusive.**
 
 ## 2. The decisive check: does it grow over time
 
@@ -23,7 +23,7 @@ Two snapshots ~1 hour apart:
 
 **Allocation count unchanged, usage essentially flat** (±4 MB is normal pool-fragmentation wobble). This is not a leak — a leak is *defined* by sustained growth; this is **three one-time startup allocations held ever since**.
 
-> Completing Criterion 1: the free rate finds *suspects*; *"growth over time" convicts*. Use them together.
+> Completing Criterion 1: the free rate is for screening; *"growth over time"* is what confirms. Use them together.
 
 ## 3. Attribution and nature
 

@@ -25,7 +25,7 @@
 
 两次独立的泄漏，共同入口都是 **OMEN Gaming Hub（OGH，HP 的游戏控制中心）**——但机制**相反**：
 
-| | 案例 B · 锅在调用方 | 案例 A · 锅在驱动 |
+| | 案例 B · 调用方触发 | 案例 A · 驱动自身泄漏 |
 |---|---|---|
 | 池标签 | `NVRM` | `RTLF` |
 | 峰值 | **1.77 GB**（累积 71 小时） | **530 MB** |
@@ -34,7 +34,7 @@
 | 机制 | 驱动按请求服务，请求方高频轮询 → 分配不归还 | **无任何进程调用它**，驱动自身在漏 |
 | 处置 | 停掉调用方（或卸载 OGH） | 禁用/删除 `rtf64` 服务（只取消绑定**无效**，见 02） |
 
-> ⚠️ **两者机制相反**：驱动无辜、锅在调用方；锅在驱动本身、OGH 只负责把它带进门。**不要把两者混为一谈。**
+> ⚠️ **两者机制相反**：案例 B 的问题在调用方，驱动本身正常；案例 A 的问题在驱动本身，OGH 只是安装来源。**不要把两者混为一谈。**
 
 第三个标签 `ismc`（317 MB）被证明**不是泄漏**——它作为"大块 ≠ 泄漏"的反例收录（见 04）。
 
@@ -66,7 +66,7 @@
 | [01 · 四条实战判据](docs/01-field-criteria.md) · [EN](docs/01-field-criteria.en.md) | **方法论**：释放率、平坦读数、映射假阳性、调用方归因（官方教程没讲的部分） |
 | [02 · 案例 A：孤儿驱动泄漏](docs/02-case-rtlf-orphan-driver.md) · [EN](docs/02-case-rtlf-orphan-driver.en.md) | 改名溯源（PDB）、断链证据、为什么"取消勾选"没用 |
 | [03 · 案例 B：调用方触发的泄漏](docs/03-case-nvrm-polling-caller.md) · [EN](docs/03-case-nvrm-polling-caller.en.md) | 一行命令找到轮询者，停掉即归零 |
-| [04 · 案例 C：大块 ≠ 泄漏](docs/04-case-ismc-benign.md) · [EN](docs/04-case-ismc-benign.en.md) | 反例：317 MB 的大块为什么放着不动 |
+| [04 · 案例 C：大块 ≠ 泄漏](docs/04-case-ismc-benign.md) · [EN](docs/04-case-ismc-benign.en.md) | 反例：317 MB 的大块为什么不处置 |
 | [evidence/](evidence/) | 脱敏后的原始证据（快照 JSON、速率 CSV、INF 摘录、PDB 提取输出） |
 | [scripts/](scripts/) | 只读诊断脚本（免 WDK，Python ctypes 直调内核接口） |
 | [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明 |

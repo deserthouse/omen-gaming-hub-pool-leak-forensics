@@ -34,7 +34,7 @@ Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control ce
 | Mechanism | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees | **No process was calling it at all** — the driver leaks on its own |
 | Fix | Stop the caller (or uninstall OGH) | Disable/delete the `rtf64` service — unchecking the filter is **not** enough (`FilterRunType=1`, `StartType=1`) |
 
-> ⚠️ **Don't conflate the two**: in the driver is innocent and the caller is the problem; in the driver itself is the problem and OGH merely delivered it.
+> ⚠️ **Don't conflate the two**: in Case B the problem is the caller, not the driver; in Case A the driver itself is the problem and OGH merely delivered it.
 
 A third tag, `ismc` (317 MB), was proven **not a leak** — kept as the "big blob ≠ leak" counter-example (see doc 04).
 

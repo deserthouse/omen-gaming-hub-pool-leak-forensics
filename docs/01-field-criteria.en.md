@@ -2,7 +2,7 @@
 
 **English** · [简体中文](01-field-criteria.md)
 
-> **Scope**: the standard workflow (pull tags → watch what grows → findstr the driver) is fully covered by Microsoft docs and community articles — but following it verbatim **makes misjudgment easy**. This doc collects four criteria paid for with real mistakes; each one maps to a genuine misdiagnosis risk.
+> **Scope**: the standard workflow (pull tags → watch what grows → findstr the driver) is fully covered by Microsoft docs and community articles — but following it verbatim **makes misjudgment easy**. This doc collects four criteria derived from real misjudgments; each one maps to a genuine misdiagnosis risk.
 
 ---
 
@@ -17,7 +17,7 @@ Measured contrast (same machine, same snapshot):
 | `cckT` | **2,757,245,939** | 2,757,042,505 | **100.0%** | ~40 MB | High churn, **not a leak** |
 | `RTLF` | 62,481 | 6,050 | **9.7%** | 530 MB | **Real leak** (56k objects never returned) |
 
-> Judging by "huge allocation count" alone would condemn `cckT` as the prime suspect — 2.75 billion allocations, but 2.757 billion frees.
+> Judging by "huge allocation count" alone would falsely identify `cckT` as the leak source — 2.75 billion allocations, but 2.757 billion frees.
 
 **Rule of thumb**: free rate < 90% is highly suspicious; < 50% is near-confirmation. But it **must** be combined with "is it growing over time" (see Case C: 3 allocs / 0 frees can still be a static hold).
 
@@ -74,9 +74,9 @@ The one-liner that works:
 tasklist /m nvml.dll
 ```
 
-In Case B, exactly **one** process system-wide had `nvml.dll` (NVIDIA's user-mode query library) loaded — OGH's background monitor. Killing it stopped the leak; the driver itself was fine.
+In Case B, exactly **one** process system-wide had `nvml.dll` (NVIDIA's user-mode query library) loaded — OGH's background monitor. Stopping it stopped the leak; the driver itself was fine.
 
-**Reasoning chain**: a third-party panel polls GPU status at a fixed cadence → every query makes the driver allocate kernel objects → the caller's query pattern outpaces frees. **Treat the caller, acquit the driver** — reinstalling the GPU driver a hundred times won't help.
+**Reasoning chain**: a third-party panel polls GPU status at a fixed cadence → every query makes the driver allocate kernel objects → the caller's query pattern outpaces frees. **Treat the caller; the driver needs no change** — reinstalling the GPU driver any number of times won't help.
 
 ---
 

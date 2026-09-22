@@ -2,7 +2,7 @@
 
 **English** · [简体中文](03-case-nvrm-polling-caller.md)
 
-> **Key point**: in a steady-rate leak the driver is often an innocent executor. Spend 10 seconds finding *who calls it* — it may save you a pointless driver reinstall.
+> **Key point**: in a steady-rate leak the driver is often just the executor — the problem is the caller. Spend 10 seconds finding *who calls it* — it may save you a pointless driver reinstall.
 
 ---
 
@@ -43,7 +43,7 @@ Three-phase rate probe (`scripts/rate_probe.py`, CSV persisted):
 | Phase | NVRM usage | Note |
 |---|---|---|
 | Baseline (probe self-check) | 59.09 MB | post-remediation |
-| 12.3-minute window | 59.99 MB | after killing the process |
+| 12.3-minute window | 59.99 MB | after stopping the process |
 | Follow-up | 59.25 MB | stable at ~59 MB |
 
 Post-remediation `NVRM` held at **~59 MB with no growth**; after reboot it started from a clean baseline with no recurrence (contrast the pre-remediation slope: 1.77 GB over 71 hours).
