@@ -1,8 +1,8 @@
-# 04 · Case C (counter-example): Big Blob ≠ Leak (ismc, 317 MB)
+# 04 · 🅲 Case C (counter-example): Big Blob ≠ Leak (ismc, 317 MB)
 
 [中文版](04-case-ismc-benign.md)
 
-**Key point**: a big number in the Top list isn't necessarily leaking. Criterion 1's free rate flags it as "suspicious" (0%), but it may be a **one-time startup allocation held statically** — remediating it gains nothing and risks something.
+> 📌 **Key point**: a big number in the Top list isn't necessarily leaking. Criterion 1's free rate flags it as "suspicious" (0%), but it may be a **one-time startup allocation held statically** — remediating it gains nothing and risks something.
 
 ---
 

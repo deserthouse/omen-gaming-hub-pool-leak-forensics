@@ -2,7 +2,7 @@
 
 [中文版](01-field-criteria.md)
 
-The standard workflow (pull tags → watch what grows → findstr the driver) is fully covered by Microsoft docs and community articles. Following it verbatim, however, **makes misjudgment easy**. This doc collects four criteria paid for with real mistakes — each one maps to a genuine misdiagnosis risk.
+> 🧭 **Scope**: the standard workflow (pull tags → watch what grows → findstr the driver) is fully covered by Microsoft docs and community articles — but following it verbatim **makes misjudgment easy**. This doc collects four criteria paid for with real mistakes; each one maps to a genuine misdiagnosis risk.
 
 ---
 
@@ -49,7 +49,7 @@ The community-standard approach is `findstr /m "TAG" *.sys`. It has two traps, b
 
 ### The fix (built into `scripts/pooltag.py`)
 
-```
+```text
 Boundary matching: if the bytes adjacent to a hit are alphanumeric → reject
                    (the tag is part of a longer identifier)
 Hit count:        report how many files matched

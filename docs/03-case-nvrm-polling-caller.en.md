@@ -1,8 +1,8 @@
-# 03 · Case B: The Polling-Caller Leak (NVRM, 1.77 GB)
+# 03 · 🅱️ Case B: The Polling-Caller Leak (NVRM, 1.77 GB)
 
 [中文版](03-case-nvrm-polling-caller.md)
 
-**Key point**: in a steady-rate leak the driver is often an innocent executor. Spend 10 seconds finding *who calls it* — it may save you a pointless driver reinstall.
+> 📌 **Key point**: in a steady-rate leak the driver is often an innocent executor. Spend 10 seconds finding *who calls it* — it may save you a pointless driver reinstall.
 
 ---
 
