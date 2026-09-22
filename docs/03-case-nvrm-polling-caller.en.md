@@ -1,8 +1,8 @@
-# 03 · 🅱️ Case B: The Polling-Caller Leak (NVRM, 1.77 GB)
+# 03 · Case B: The Polling-Caller Leak (NVRM, 1.77 GB)
 
 [中文版](03-case-nvrm-polling-caller.md)
 
-> 📌 **Key point**: in a steady-rate leak the driver is often an innocent executor. Spend 10 seconds finding *who calls it* — it may save you a pointless driver reinstall.
+> **Key point**: in a steady-rate leak the driver is often an innocent executor. Spend 10 seconds finding *who calls it* — it may save you a pointless driver reinstall.
 
 ---
 
@@ -48,7 +48,7 @@ Three-phase rate probe (`scripts/rate_probe.py`, CSV persisted):
 
 Post-remediation `NVRM` held at **~59 MB with no growth**; after reboot it started from a clean baseline with no recurrence (contrast the pre-remediation slope: 1.77 GB over 71 hours).
 
-### ⚠️ Historical observation (not persisted)
+### Historical observation (not persisted)
 
 During the remediation session, **ten consecutive byte-identical readings** were observed (59.25 MB unchanged, ~1 min apart) — the "flat reading" strongest-evidence form described in Criterion 2. The per-reading log was not persisted (the saved CSV holds only the three phase summaries above); cited at the **historical observation** grade. The "growth stopped" verdict rests on the persisted three-phase data.
 

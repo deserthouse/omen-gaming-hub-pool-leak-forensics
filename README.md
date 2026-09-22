@@ -1,6 +1,6 @@
 # OMEN Gaming Hub Pool-Leak Forensics
 
-> 📌 **Two independent Windows nonpaged-pool leaks that ate gigabytes while Task Manager showed nothing — full evidence chains for a polling-caller leak (🅱️) and an orphan-driver leak (🅰️), plus a big-looking tag that wasn't a leak at all (🅲).**
+> **Two independent Windows nonpaged-pool leaks that ate gigabytes while Task Manager showed nothing — full evidence chains for a polling-caller leak and an orphan-driver leak, plus a big-looking tag that wasn't a leak at all.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 [![中文文档](https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0078D4.svg)](README.zh-CN.md)
@@ -24,16 +24,16 @@ An OMEN laptop (i7 / 32 GB / Win11) showed a **3.9 GB nonpaged pool** with no pr
 
 Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control center)** — but their mechanisms are **opposite**:
 
-| | 🅱️ Case B · polling-caller leak | 🅰️ Case A · orphan-driver leak |
+| | Case B · polling-caller leak | Case A · orphan-driver leak |
 |---|---|---|
 | Pool tag | `NVRM` | `RTLF` |
 | Peak | **1.77 GB** (accumulated over 71 h) | **530 MB** |
 | Leaking component | NVIDIA kernel driver (`nvlddmkm`) | Realtek NDIS lightweight filter (`rtf64x64.sys`) |
-| **OGH's role** | 📞 **The caller**: its background process was the *only* `nvml.dll` consumer system-wide | 📦 **The installer**: shipped it as a Network Booster dependency and doesn't remove it on uninstall |
-| Mechanism | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees | 👻 **No process was calling it at all** — the driver leaks on its own |
+| **OGH's role** | **The caller**: its background process was the *only* `nvml.dll` consumer system-wide | **The installer**: shipped it as a Network Booster dependency and doesn't remove it on uninstall |
+| Mechanism | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees | **No process was calling it at all** — the driver leaks on its own |
 | Fix | Stop the caller (or uninstall OGH) | Disable/delete the `rtf64` service — unchecking the filter is **not** enough (`FilterRunType=1`, `StartType=1`) |
 
-> ⚠️ **Don't conflate the two**: in 🅱️ the driver is innocent and the caller is the problem; in 🅰️ the driver itself is the problem and OGH merely delivered it.
+> ⚠️ **Don't conflate the two**: in the driver is innocent and the caller is the problem; in the driver itself is the problem and OGH merely delivered it.
 
 A third tag, `ismc` (317 MB), was proven **not a leak** — kept as the "big blob ≠ leak" counter-example (see doc 04).
 
@@ -62,13 +62,13 @@ A third tag, `ismc` (317 MB), was proven **not a leak** — kept as the "big blo
 
 | Doc | What's in it |
 |---|---|
-| [01 · Four field criteria](docs/01-field-criteria.en.md) · [中文](docs/01-field-criteria.md) | 🧭 **Methodology**: free rate, flat readings, mapping false positives, caller attribution — the parts official tutorials skip |
-| [02 · Case A: orphan driver](docs/02-case-rtlf-orphan-driver.en.md) · [中文](docs/02-case-rtlf-orphan-driver.md) | 🅰️ renamed-framework tracing (PDB), dead call chain, why "unchecking" fails |
-| [03 · Case B: polling caller](docs/03-case-nvrm-polling-caller.en.md) · [中文](docs/03-case-nvrm-polling-caller.md) | 🅱️ one command finds the poller, stop it and the leak stops |
-| [04 · Case C: big blob ≠ leak](docs/04-case-ismc-benign.en.md) · [中文](docs/04-case-ismc-benign.md) | 🅲 counter-example: why a 317 MB block was left alone |
-| [evidence/](evidence/) | 🗂️ sanitized raw evidence (snapshots, rate CSV, INF excerpts, PDB extraction) |
-| [scripts/](scripts/) | 🔧 read-only diagnostic tools (no WDK; Python ctypes straight into the kernel API) |
-| [DISCLAIMER.md](DISCLAIMER.md) | 📜 scope statement |
+| [01 · Four field criteria](docs/01-field-criteria.en.md) · [中文](docs/01-field-criteria.md) | **Methodology**: free rate, flat readings, mapping false positives, caller attribution — the parts official tutorials skip |
+| [02 · Case A: orphan driver](docs/02-case-rtlf-orphan-driver.en.md) · [中文](docs/02-case-rtlf-orphan-driver.md) | renamed-framework tracing (PDB), dead call chain, why "unchecking" fails |
+| [03 · Case B: polling caller](docs/03-case-nvrm-polling-caller.en.md) · [中文](docs/03-case-nvrm-polling-caller.md) | one command finds the poller, stop it and the leak stops |
+| [04 · Case C: big blob ≠ leak](docs/04-case-ismc-benign.en.md) · [中文](docs/04-case-ismc-benign.md) | counter-example: why a 317 MB block was left alone |
+| [evidence/](evidence/) | sanitized raw evidence (snapshots, rate CSV, INF excerpts, PDB extraction) |
+| [scripts/](scripts/) | read-only diagnostic tools (no WDK; Python ctypes straight into the kernel API) |
+| [DISCLAIMER.md](DISCLAIMER.md) | scope statement |
 
 Every doc is available in both English (`*.en.md`) and Chinese (`*.md`) — switch languages via the link at the top of each page.
 
@@ -91,7 +91,7 @@ python scripts/diffall.py before.json after.json # incremental diff
 python scripts/rate_probe.py phase1 30 30 --auto 6   # auto-pick 6 non-generic tags to watch
 ```
 
-> 🔒 All four only call `NtQuerySystemInformation` queries and **read** driver binaries — no system modification, no network.
+> All four only call `NtQuerySystemInformation` queries and **read** driver binaries — no system modification, no network.
 
 ---
 
@@ -100,7 +100,7 @@ python scripts/rate_probe.py phase1 30 30 --auto 6   # auto-pick 6 non-generic t
 Same rules as the author's other forensics repo ([alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)):
 
 1. **Every conclusion ships with reproducible evidence** — command, raw output, or data table.
-2. **Three statement grades**: ✅ **measured** (persisted raw data) / 🔎 **inferred** (reasoned from evidence, basis stated) / ⚠️ **historical observation** (seen but not persisted; re-verification method given). There are exactly two historical observations, both labeled: Finding #9 below, plus the flat-reading note inside doc 03.
+2. **Three statement grades**: ✅ **measured** (persisted raw data) / **inferred** (reasoned from evidence, basis stated) / ⚠️ **historical observation** (seen but not persisted; re-verification method given). There are exactly two historical observations, both labeled: Finding #9 below, plus the flat-reading note inside doc 03.
 3. **Correlation ≠ causation** — temporal coincidence is a lead, not a conclusion.
 4. **Naming facts, not motives**: OGH is named because it is the proven common entry point of both leaks; Realtek's and NVIDIA's roles are stated per evidence, with no attribution of intent.
 

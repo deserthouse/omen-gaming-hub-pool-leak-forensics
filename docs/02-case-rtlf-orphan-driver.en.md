@@ -1,8 +1,8 @@
-# 02 · 🅰️ Case A: The Orphan-Driver Leak (RTLF, 530 MB)
+# 02 · Case A: The Orphan-Driver Leak (RTLF, 530 MB)
 
 [中文版](02-case-rtlf-orphan-driver.md)
 
-> 📌 **Key point**: uninstalling the software ≠ removing the driver. This driver kept leaking with **no process calling it at all**, and the software that brought it in doesn't take it away on uninstall.
+> **Key point**: uninstalling the software ≠ removing the driver. This driver kept leaking with **no process calling it at all**, and the software that brought it in doesn't take it away on uninstall.
 
 ---
 
@@ -107,7 +107,7 @@ Post-remediation reboot, re-measured:
 | `RTLF` usage | 530 MB | **0** |
 | Network | — | Normal (bypass layer, as expected) |
 
-## 7. ⚠️ Historical observation (not persisted)
+## 7. Historical observation (not persisted)
 
 Before remediation, the device object `\Device\RTF64` was observed with a DACL granting **Everyone (WD) read/write** — any local process could talk to the driver directly. The observation happened during the remediation-day session and **was not persisted as an evidence file**; after remediation the driver no longer loads and the device object is gone. Re-verification method (if ever needed): temporarily `sc start rtf64`, then read the SDDL of `\Device\RTF64` via `NtOpenFile + NtQuerySecurityObject`. Cited at the **historical observation** grade per this repo's evidence discipline; not part of the conclusion chain.
 

@@ -2,7 +2,7 @@
 
 [中文版](01-field-criteria.md)
 
-> 🧭 **Scope**: the standard workflow (pull tags → watch what grows → findstr the driver) is fully covered by Microsoft docs and community articles — but following it verbatim **makes misjudgment easy**. This doc collects four criteria paid for with real mistakes; each one maps to a genuine misdiagnosis risk.
+> **Scope**: the standard workflow (pull tags → watch what grows → findstr the driver) is fully covered by Microsoft docs and community articles — but following it verbatim **makes misjudgment easy**. This doc collects four criteria paid for with real mistakes; each one maps to a genuine misdiagnosis risk.
 
 ---
 

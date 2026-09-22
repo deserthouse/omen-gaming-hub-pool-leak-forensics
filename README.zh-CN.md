@@ -1,6 +1,6 @@
 # OMEN Gaming Hub 内核池泄漏取证
 
-> 📌 **Windows 非分页池被吃到数 GB、任务管理器却看不到元凶——两次独立泄漏的完整取证：调用方归因型（🅱️）与孤儿驱动型（🅰️），外加一条"大块 ≠ 泄漏"的反例（🅲）。**
+> **Windows 非分页池被吃到数 GB、任务管理器却看不到元凶——两次独立泄漏的完整取证：调用方归因型与孤儿驱动型，外加一条"大块 ≠ 泄漏"的反例。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 [![English](https://img.shields.io/badge/README-English-0078D4.svg)](README.md)
@@ -24,16 +24,16 @@
 
 两次独立的泄漏，共同入口都是 **OMEN Gaming Hub（OGH，HP 的游戏控制中心）**——但机制**相反**：
 
-| | 🅱️ 案例 B · 调用方归因型 | 🅰️ 案例 A · 孤儿驱动型 |
+| | 案例 B · 调用方归因型 | 案例 A · 孤儿驱动型 |
 |---|---|---|
 | 池标签 | `NVRM` | `RTLF` |
 | 峰值 | **1.77 GB**（累积 71 小时） | **530 MB** |
 | 泄漏主体 | NVIDIA 内核驱动（`nvlddmkm`） | Realtek NDIS 轻量过滤器（`rtf64x64.sys`） |
-| **OGH 的角色** | 📞 **调用方**：其后台进程是全机唯一轮询方 | 📦 **安装者**：作为"网络助推器"依赖装入，且卸载时不带走 |
-| 机制 | 驱动按请求服务，请求方高频轮询 → 分配不归还 | 👻 **无任何进程调用它**，驱动自身在漏 |
+| **OGH 的角色** | **调用方**：其后台进程是全机唯一轮询方 | **安装者**：作为"网络助推器"依赖装入，且卸载时不带走 |
+| 机制 | 驱动按请求服务，请求方高频轮询 → 分配不归还 | **无任何进程调用它**，驱动自身在漏 |
 | 处置 | 停掉调用方（或卸载 OGH） | 禁用/删除 `rtf64` 服务（只取消绑定**无效**，见 02） |
 
-> ⚠️ **两者机制相反**：🅱️ 驱动无辜、锅在调用方；🅰️ 锅在驱动本身、OGH 只负责把它带进门。**不要把两者混为一谈。**
+> ⚠️ **两者机制相反**：驱动无辜、锅在调用方；锅在驱动本身、OGH 只负责把它带进门。**不要把两者混为一谈。**
 
 第三个标签 `ismc`（317 MB）被证明**不是泄漏**——它作为"大块 ≠ 泄漏"的反例收录（见 04）。
 
@@ -62,13 +62,13 @@
 
 | 文档 | 内容 |
 |---|---|
-| [01 · 四条实战判据](docs/01-field-criteria.md) · [EN](docs/01-field-criteria.en.md) | 🧭 **方法论**：释放率、平坦读数、映射假阳性、调用方归因（官方教程没讲的部分） |
-| [02 · 案例 A：孤儿驱动泄漏](docs/02-case-rtlf-orphan-driver.md) · [EN](docs/02-case-rtlf-orphan-driver.en.md) | 🅰️ 改名溯源（PDB）、断链证据、为什么"取消勾选"没用 |
-| [03 · 案例 B：调用方触发的泄漏](docs/03-case-nvrm-polling-caller.md) · [EN](docs/03-case-nvrm-polling-caller.en.md) | 🅱️ 一行命令找到轮询者，停掉即归零 |
-| [04 · 案例 C：大块 ≠ 泄漏](docs/04-case-ismc-benign.md) · [EN](docs/04-case-ismc-benign.en.md) | 🅲 反例：317 MB 的大块为什么放着不动 |
-| [evidence/](evidence/) | 🗂️ 脱敏后的原始证据（快照 JSON、速率 CSV、INF 摘录、PDB 提取输出） |
-| [scripts/](scripts/) | 🔧 只读诊断脚本（免 WDK，Python ctypes 直调内核接口） |
-| [DISCLAIMER.md](DISCLAIMER.md) | 📜 使用范围声明 |
+| [01 · 四条实战判据](docs/01-field-criteria.md) · [EN](docs/01-field-criteria.en.md) | **方法论**：释放率、平坦读数、映射假阳性、调用方归因（官方教程没讲的部分） |
+| [02 · 案例 A：孤儿驱动泄漏](docs/02-case-rtlf-orphan-driver.md) · [EN](docs/02-case-rtlf-orphan-driver.en.md) | 改名溯源（PDB）、断链证据、为什么"取消勾选"没用 |
+| [03 · 案例 B：调用方触发的泄漏](docs/03-case-nvrm-polling-caller.md) · [EN](docs/03-case-nvrm-polling-caller.en.md) | 一行命令找到轮询者，停掉即归零 |
+| [04 · 案例 C：大块 ≠ 泄漏](docs/04-case-ismc-benign.md) · [EN](docs/04-case-ismc-benign.en.md) | 反例：317 MB 的大块为什么放着不动 |
+| [evidence/](evidence/) | 脱敏后的原始证据（快照 JSON、速率 CSV、INF 摘录、PDB 提取输出） |
+| [scripts/](scripts/) | 只读诊断脚本（免 WDK，Python ctypes 直调内核接口） |
+| [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明 |
 
 每篇文档均有中英两版（中文 `*.md` / 英文 `*.en.md`），页面顶部可互相切换。
 
@@ -91,7 +91,7 @@ python scripts/diffall.py before.json after.json # 增量对比
 python scripts/rate_probe.py phase1 30 30 --auto 6   # 自动挑 6 个非通用标签测速率
 ```
 
-> 🔒 四个脚本都只调用 `NtQuerySystemInformation` 查询与**读取**驱动二进制，不修改系统、不联网。
+> 四个脚本都只调用 `NtQuerySystemInformation` 查询与**读取**驱动二进制，不修改系统、不联网。
 
 ---
 
@@ -100,7 +100,7 @@ python scripts/rate_probe.py phase1 30 30 --auto 6   # 自动挑 6 个非通用�
 与作者的另一个取证仓库（[alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)）遵循同一套纪律：
 
 1. **结论必须带可复现的证据**——每个判断附命令、原始输出或数据表。
-2. **区分三级陈述**：✅ **实测事实**（有落盘原始数据）/ 🔎 **推断**（由证据合理推出，注明依据）/ ⚠️ **历史观察**（当时见过但未落盘，注明复验方法）。"历史观察"共两处，均已标注：摘要表第 9 条，以及 03 文档内的平坦读数注记。
+2. **区分三级陈述**：✅ **实测事实**（有落盘原始数据）/ **推断**（由证据合理推出，注明依据）/ ⚠️ **历史观察**（当时见过但未落盘，注明复验方法）。"历史观察"共两处，均已标注：摘要表第 9 条，以及 03 文档内的平坦读数注记。
 3. **区分「关联」与「因果」**——时间吻合只是线索。
 4. **点名的是事实，不是定性**：本仓库点名 OMEN Gaming Hub 是因为两个泄漏的共同入口都是它（有实证）；Realtek 与 NVIDIA 各自的角色按证据陈述，不做动机推断。
 
