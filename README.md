@@ -1,143 +1,108 @@
-# OMEN Gaming Hub 内核池泄漏取证
+# OMEN Gaming Hub Pool-Leak Forensics
 
-**Windows 非分页池（Nonpaged Pool）被吃到数 GB、任务管理器却看不到元凶——两次独立泄漏的完整取证：调用方归因型与孤儿驱动型，外加一条"大块 ≠ 泄漏"的反例**
+**Two independent Windows nonpaged-pool leaks that ate gigabytes while Task Manager showed nothing — full evidence chains for a polling-caller leak (NVRM) and an orphan-driver leak (RTLF), plus a big-looking tag that wasn't a leak at all.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
----
-
-## 这个仓库是什么
-
-一台 OMEN 笔记本（i7 / 32 GB / Win11）出现**非分页池占用 3.9 GB**：任务管理器里没有任何进程能解释，重启后缓慢复发。本仓库记录把这个问题**收敛到具体驱动与具体调用方**的完整过程、判据与原始数据。
-
-两次独立的泄漏，共同入口都是 **OMEN Gaming Hub（OGH，HP 的游戏控制中心）**：
-
-| | 案例 B · 调用方归因型 | 案例 A · 孤儿驱动型 |
-|---|---|---|
-| 池标签 | `NVRM` | `RTLF` |
-| 峰值 | **1.77 GB**（累积 71 小时） | **530 MB** |
-| 泄漏主体 | NVIDIA 内核驱动（`nvlddmkm`） | Realtek NDIS 轻量过滤器（`rtf64x64.sys`） |
-| **OGH 的角色** | **调用方**：其后台进程是全机唯一轮询方 | **安装者**：作为"网络助推器"依赖装入，且卸载时不带走 |
-| 机制 | 驱动按请求服务，请求方高频轮询 → 分配不归还 | **无任何进程调用它**，驱动自身在漏 |
-| 处置 | 停掉调用方（或卸载 OGH） | 禁用/删除 rtf64 服务（只取消绑定**无效**，见 02） |
-
-> ⚠️ 两者机制相反：案例 B 驱动无辜、锅在调用方；案例 A 锅在驱动本身、OGH 只负责把它带进门。**不要把两者混为一谈。**
-
-第三个标签 `ismc`（317 MB）被证明**不是泄漏**——它作为"大块 ≠ 泄漏"的反例收录（见 04）。
-
-**基础流程不重复造轮子**：池标签排查的标准流程见微软官方文档 [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) 与 [PoolMonX](https://github.com/zodiacon/PoolMonX)。本仓库只讲**官方教程没讲的**：什么时候会误判、用什么判据避免。
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) · [中文文档](README.zh-CN.md)
 
 ---
 
-## 实测结论摘要
+## What this is
 
-| # | 结论 | 证据 | 强度 |
-|---|---|---|---|
-| 1 | `RTLF` 泄漏 530 MB：62,481 次分配 / 6,050 次释放，**释放率 9.7%** | 池标签快照（evidence/pooltag-before） | **实测** |
-| 2 | `rtf64x64.sys` 是把开源框架 **WinpkFilter V2 改名打包**的产物 | 驱动内嵌 PDB 路径 `...WinpkFilter_V2\kernel\LWF\...` | **实测** |
-| 3 | 处置时**全机没有任何进程在调用**该驱动的通信链（`tasklist /m` 两级 DLL 均无加载者） | 进程模块枚举 | **实测** |
-| 4 | 禁用 rtf64 服务 + 重启后，`RTLF` = **0** | 处置后快照 | **实测** |
-| 5 | OGH 后台进程 `OmenCommandCenterBackground` 是**全机唯一** `nvml.dll` 消费者 | `tasklist /m nvml.dll` | **实测** |
-| 6 | 停掉该进程后，`NVRM` 12 分钟内零增长；其后台服务此后被卸载，泄漏源消失 | 三阶段速率探针 CSV | **实测** |
-| 7 | 处置后 `NVRM` 从 1.77 GB 降至 58.8 MB（重启后），无复发 | 前后快照对比 | **实测** |
-| 8 | `rtf64` 服务不随 OGH 卸载而消失（独立 SCM 服务，`StartType=1` 系统启动即加载） | oem43.inf 服务段 | **实测** |
-| 9 | 设备 `\Device\RTF64` 的 DACL 允许 Everyone 读写 | 处置前会话观察（**未落盘**，复验方法已附） | ⚠️ **历史观察** |
-| 10 | `ismc` 317 MB 为静态持有（3 次分配 0 释放，**不随时间增长**），非泄漏 | 双时点快照对比 | **实测** |
+An OMEN laptop (i7 / 32 GB / Win11) showed a **3.9 GB nonpaged pool** with no process in Task Manager to explain it, slowly recurring after reboots. This repo documents how the problem was traced to specific drivers **and specific callers**, with the criteria, raw data, and read-only tooling to reproduce the analysis.
 
----
-
-## 目录
-
-| 文档 | 内容 |
-|---|---|
-| [docs/01-field-criteria.md](docs/01-field-criteria.md) | **四条实战判据**：释放率、平坦读数、映射假阳性、调用方归因（官方教程没讲的部分） |
-| [docs/02-case-rtlf-orphan-driver.md](docs/02-case-rtlf-orphan-driver.md) | **案例 A**：孤儿驱动泄漏——改名溯源、断链证据、为什么"取消勾选"没用 |
-| [docs/03-case-nvrm-polling-caller.md](docs/03-case-nvrm-polling-caller.md) | **案例 B**：调用方触发的泄漏——一行命令找到轮询者，停掉即归零 |
-| [docs/04-case-ismc-benign.md](docs/04-case-ismc-benign.md) | **案例 C（反例）**：317 MB 的大块为什么放着不动 |
-| [evidence/](evidence/) | 脱敏后的原始证据（快照 JSON、速率 CSV、INF 摘录、PDB 提取输出） |
-| [scripts/](scripts/) | 只读诊断脚本（免 WDK，Python ctypes 直调内核接口） |
-| [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明 |
-
----
-
-## 脚本（全部只读）
-
-| 脚本 | 用途 |
-|---|---|
-| `scripts/pooltag.py` | 池标签快照：按占用排序 Top N，并**把标签映射到驱动**（边界判定 + 匹配计数，拒绝 `Cont` 命中 `Content` 的假阳性） |
-| `scripts/alltags.py` | 导出**全部**标签（约 3900 条）到 JSON，做对比基线 |
-| `scripts/rate_probe.py` | **速率探针**：固定窗口测 MB/小时，A/B 验证用 |
-| `scripts/diffall.py` | 两份快照的增量对比（找"谁在长"） |
-
-```bash
-python scripts/pooltag.py snapshot.json         # Top 标签 + 标签→驱动映射
-python scripts/alltags.py before.json            # 全量基线
-# ……隔一段时间……
-python scripts/diffall.py before.json after.json # 增量对比
-python scripts/rate_probe.py phase1 30 30 --auto 6   # 自动挑 6 个非通用标签测速率
-```
-
-四个脚本都只调用 `NtQuerySystemInformation` 查询与**读取**驱动二进制，不修改系统、不联网。
-
----
-
-## 证据与表述原则
-
-与作者的另一个取证仓库（[alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)）遵循同一套纪律：
-
-1. **结论必须带可复现的证据**——每个判断附命令、原始输出或数据表。
-2. **区分三级陈述**：**实测事实**（有落盘原始数据）/ **推断**（由证据合理推出，注明依据）/ **历史观察**（当时见过但未落盘，注明复验方法）。第 9 条是本仓库唯一一条"历史观察"，如实标注。
-3. **区分「关联」与「因果」**——时间吻合只是线索。
-4. **点名的是事实，不是定性**：本仓库点名 OMEN Gaming Hub 是因为两个泄漏的共同入口都是它（有实证）；Realtek 与 NVIDIA 各自的角色按证据陈述，不做动机推断。
-
----
-
-## 免责声明
-
-详见 [DISCLAIMER.md](DISCLAIMER.md)。简要版：
-
-- 本文档与脚本仅供**在你自己拥有并管理的设备上**进行诊断与技术研究。
-- 作者与文中提及的任何厂商**均无关联**。
-- 数据来自**单台机器的实测**；不同机型/驱动版本行为可能不同。
-- 处置步骤可能修改系统服务，**执行前请自行评估并创建还原点**。
-
-## License
-
-[MIT](LICENSE)
-
----
-
-## English summary
-
-Forensics for **two independent nonpaged-pool leaks on an OMEN laptop (Windows 11)**, both traced back to **OMEN Gaming Hub (OGH)** — plus one big-looking tag that turned out to be benign. Full evidence chain, read-only scripts, no WDK required.
-
-### The two leaks (opposite mechanisms — don't conflate them)
+Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control center)** — but their mechanisms are **opposite**:
 
 | | Case B · polling-caller leak | Case A · orphan-driver leak |
 |---|---|---|
 | Pool tag | `NVRM` | `RTLF` |
-| Peak | **1.77 GB** over 71 h | **530 MB** |
-| Leaking component | NVIDIA kernel driver (`nvlddmkm`) | Realtek NDIS LWF (`rtf64x64.sys`) |
-| OGH's role | **The caller** — its background process was the *only* `nvml.dll` consumer system-wide | **The installer** — shipped it as a Network Booster dependency, doesn't remove it on uninstall |
-| Mechanism | Driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees | **Nobody was calling it** — the driver leaks on its own |
+| Peak | **1.77 GB** (accumulated over 71 h) | **530 MB** |
+| Leaking component | NVIDIA kernel driver (`nvlddmkm`) | Realtek NDIS lightweight filter (`rtf64x64.sys`) |
+| **OGH's role** | **The caller**: its background process was the *only* `nvml.dll` consumer system-wide | **The installer**: shipped it as a Network Booster dependency and doesn't remove it on uninstall |
+| Mechanism | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees | **No process was calling it at all** — the driver leaks on its own |
 | Fix | Stop the caller (or uninstall OGH) | Disable/delete the `rtf64` service — unchecking the filter is **not** enough (`FilterRunType=1`, `StartType=1`) |
 
-Counter-example: `ismc` (317 MB, 3 allocs / 0 frees, **not growing**) — a static allocation held by Intel RST with no physical disks attached. Not a leak; don't touch it.
+> ⚠️ Don't conflate the two: in Case B the driver is innocent and the caller is the problem; in Case A the driver itself is the problem and OGH merely delivered it.
 
-### Four field criteria the official tutorials skip
+A third tag, `ismc` (317 MB), was proven **not a leak** — kept as the "big blob ≠ leak" counter-example (see [04](docs/04-case-ismc-benign.md)).
 
-1. **Free rate, not alloc count** — a tag with 2.75 *billion* allocations and a 100% free rate is healthy churn, not a leak; `RTLF` leaked with only 62k allocations (9.7% freed).
-2. **Flat readings beat lower averages** — byte-identical consecutive readings after remediation are stronger evidence than a lower mean.
-3. **Tag→driver mapping needs boundary matching + hit counts** — naive `findstr` returns substring false positives (579 files for `Cont`) and stops at the first hit (mis-attributed `NVRM` to the wrong .sys).
-4. **For slow steady leaks, find the caller first** — `tasklist /m <api-dll>` (one line) identified the sole poller; replacing the driver a hundred times wouldn't have helped.
+**No reinvention of basics**: the standard pool-tag workflow lives in the official docs — [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) and [PoolMonX](https://github.com/zodiacon/PoolMonX). This repo covers only what they **don't**: when you're about to misjudge, and which criteria prevent it.
 
-### Repo layout
+---
 
-- `docs/01-field-criteria.md` — the four criteria above, with measurement discipline (≥15 min windows, no disk scans during probing)
-- `docs/02-case-rtlf-orphan-driver.md` — orphan driver: WinpkFilter V2 renamed (PDB path proof), dead call chain, why unchecking the LWF fails
-- `docs/03-case-nvrm-polling-caller.md` — polling caller: unique `nvml.dll` consumer, three-phase stop-and-verify
-- `docs/04-case-ismc-benign.md` — the benign counter-example
-- `evidence/` — sanitized raw data (pool-tag snapshots, rate-probe CSV, INF excerpts, PDB extraction)
-- `scripts/` — four read-only tools (Python ctypes, no WDK/admin needed)
+## Findings at a glance
 
-Documentation is in Chinese; this summary plus the code/evidence (English throughout) should get you oriented. Disclaimer: single-machine measurements, no vendor affiliation, MIT license.
+| # | Finding | Evidence | Strength |
+|---|---|---|---|
+| 1 | `RTLF` leaked 530 MB: 62,481 allocs / 6,050 frees — **9.7% free rate** | pool-tag snapshot (evidence/pooltag-before) | **measured** |
+| 2 | `rtf64x64.sys` is the open/commercial **WinpkFilter V2** framework, renamed | embedded PDB path `...WinpkFilter_V2\kernel\LWF\...` | **measured** |
+| 3 | At remediation time **no process on the system was loading** the driver's call chain (`tasklist /m`, both DLLs) | process-module enumeration | **measured** |
+| 4 | After disabling `rtf64` + reboot, `RTLF` = **0** | post-remediation snapshot | **measured** |
+| 5 | OGH's `OmenCommandCenterBackground` was the **sole** `nvml.dll` consumer | `tasklist /m nvml.dll` | **measured** |
+| 6 | After stopping that process, `NVRM` showed zero growth; its services were later uninstalled and the source vanished | three-phase rate-probe CSV | **measured** |
+| 7 | `NVRM` dropped from 1.77 GB to 58.8 MB after reboot; no recurrence | before/after snapshots | **measured** |
+| 8 | The `rtf64` service survives OGH uninstall (standalone SCM service, `StartType=1`) | oem43.inf service section | **measured** |
+| 9 | Device `\Device\RTF64`'s DACL allowed Everyone read/write | pre-remediation session observation (**not persisted**; re-verification method included) | ⚠️ **historical observation** |
+| 10 | `ismc`'s 317 MB is a static hold (3 allocs / 0 frees, **not growing**) — not a leak | two-point snapshot comparison | **measured** |
+
+---
+
+## Contents
+
+| Doc | What's in it |
+|---|---|
+| [docs/01-field-criteria.md](docs/01-field-criteria.md) | **Four field criteria**: free rate, flat readings, mapping false positives, caller attribution (the parts official tutorials skip) |
+| [docs/02-case-rtlf-orphan-driver.md](docs/02-case-rtlf-orphan-driver.md) | **Case A**: orphan driver — renamed-framework tracing, dead call chain, why "unchecking" fails |
+| [docs/03-case-nvrm-polling-caller.md](docs/03-case-nvrm-polling-caller.md) | **Case B**: polling caller — one command finds the poller, stop it and the leak stops |
+| [docs/04-case-ismc-benign.md](docs/04-case-ismc-benign.md) | **Case C (counter-example)**: why a 317 MB block was left alone |
+| [evidence/](evidence/) | sanitized raw evidence (snapshots, rate CSV, INF excerpts, PDB extraction) |
+| [scripts/](scripts/) | read-only diagnostic tools (no WDK; Python ctypes straight into the kernel API) |
+| [DISCLAIMER.md](DISCLAIMER.md) | scope statement |
+
+Docs are written in Chinese — the tables, code, and evidence are language-neutral, and the criteria above carry the methodology. A [full Chinese README](README.zh-CN.md) is available.
+
+---
+
+## Scripts (all read-only)
+
+| Script | Purpose |
+|---|---|
+| `scripts/pooltag.py` | pool-tag snapshot: top-N by usage with **tag→driver mapping** (boundary matching + hit counts — rejects `Cont` matching inside `Content`) |
+| `scripts/alltags.py` | export **all** tags (~3,900) to JSON as a comparison baseline |
+| `scripts/rate_probe.py` | **rate probe**: MB/hour over a fixed window, for A/B verification |
+| `scripts/diffall.py` | diff two snapshots (find "what's growing") |
+
+```bash
+python scripts/pooltag.py snapshot.json         # top tags + tag→driver mapping
+python scripts/alltags.py before.json            # full baseline
+# ... some time later ...
+python scripts/diffall.py before.json after.json # incremental diff
+python scripts/rate_probe.py phase1 30 30 --auto 6   # auto-pick 6 non-generic tags to watch
+```
+
+All four only call `NtQuerySystemInformation` queries and **read** driver binaries — no system modification, no network.
+
+---
+
+## Evidence & statement discipline
+
+Same rules as the author's other forensics repo ([alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)):
+
+1. **Every conclusion ships with reproducible evidence** — command, raw output, or data table.
+2. **Three statement grades**: **measured** (persisted raw data) / **inferred** (reasoned from evidence, basis stated) / **historical observation** (seen but not persisted; re-verification method given). Finding #9 is the repo's only historical observation, labeled as such.
+3. **Correlation ≠ causation** — temporal coincidence is a lead, not a conclusion.
+4. **Naming facts, not motives**: OGH is named because it is the proven common entry point of both leaks; Realtek's and NVIDIA's roles are stated per evidence, with no attribution of intent.
+
+---
+
+## Disclaimer
+
+See [DISCLAIMER.md](DISCLAIMER.md). In short:
+
+- For diagnosis and technical research **on devices you own and administer** only.
+- The author is **not affiliated** with any vendor mentioned.
+- All data comes from **a single machine**; other models/driver versions may differ.
+- Remediation steps modify system services — **assess and create a restore point first**.
+
+## License
+
+[MIT](LICENSE)
