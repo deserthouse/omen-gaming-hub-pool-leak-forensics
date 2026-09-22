@@ -11,6 +11,7 @@
 ## Contents
 
 - [What this is](#what-this-is)
+- [Is this the problem you're seeing?](#is-this-the-problem-youre-seeing)
 - [Findings at a glance](#findings-at-a-glance)
 - [Docs](#docs)
 - [Scripts (all read-only)](#scripts-all-read-only)
@@ -39,6 +40,25 @@ Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control ce
 A third tag, `ismc` (317 MB), was proven **not a leak** — yet it is documented too (see doc 04): its free rate is 0%, making it look *more* like a leak than the real ones. Without this counter-example, the free-rate criterion alone would misidentify it.
 
 **No reinvention of basics**: the standard pool-tag workflow lives in the official docs — [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) and [PoolMonX](https://github.com/zodiacon/PoolMonX). This repo covers only what they **don't**: when you're about to misjudge, and which criteria prevent it.
+
+---
+
+## Is this the problem you're seeing?
+
+If both of these match, it probably is:
+
+1. Task Manager → Performance → Memory shows a **nonpaged pool** in the GB range — resets on reboot, then slowly climbs back;
+2. OMEN Gaming Hub is (or was) installed.
+
+One command tells you which case you have (the [scripts](scripts/) are read-only; Python as admin):
+
+```bash
+python scripts/pooltag.py snapshot.json
+```
+
+In the top list: `RTLF` → follow [doc 02](docs/02-case-rtlf-orphan-driver.en.md) (disable the `rtf64` service); `NVRM` and growing → follow [doc 03](docs/03-case-nvrm-polling-caller.en.md) (stop the OGH background). A big tag that is *not* growing — check [doc 04](docs/04-case-ismc-benign.en.md) first: a large allocation is not necessarily a leak.
+
+> The findings table below is for readers who want to verify the evidence — skip it if you just want the fix.
 
 ---
 

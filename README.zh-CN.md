@@ -11,6 +11,7 @@
 ## 目录
 
 - [这个仓库是什么](#这个仓库是什么)
+- [这是不是你遇到的问题？](#这是不是你遇到的问题)
 - [实测结论摘要](#实测结论摘要)
 - [文档](#文档)
 - [脚本（全部只读）](#脚本全部只读)
@@ -39,6 +40,25 @@
 第三个标签 `ismc`（317 MB）被证明**不是泄漏**。它同样被收录（见 04），因为它的释放率为 0%、比真正的泄漏更"像"泄漏——不收录这个反例，释放率判据会把它误判进去。
 
 **基础流程不重复造轮子**：池标签排查的标准流程见微软官方文档 [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) 与 [PoolMonX](https://github.com/zodiacon/PoolMonX)。本仓库只讲**官方教程没讲的**：什么时候会误判、用什么判据避免。
+
+---
+
+## 这是不是你遇到的问题？
+
+同时满足下面两条，大概率就是本仓库记录的问题：
+
+1. 任务管理器 → 性能 → 内存，右下角"**非分页缓冲池**"占用达 GB 级，重启后清零、又慢慢回升；
+2. 装过（或正在用）**OMEN Gaming Hub**。
+
+一条命令确认是哪一种（[脚本](scripts/) 只读，需管理员 Python）：
+
+```bash
+python scripts/pooltag.py snapshot.json
+```
+
+看 Top 列表：出现 `RTLF` → 按 [02](docs/02-case-rtlf-orphan-driver.md) 处置（禁用 `rtf64` 服务）；出现 `NVRM` 且在增长 → 按 [03](docs/03-case-nvrm-polling-caller.md) 处置（停掉 OGH 后台）。只出现在列表里但不增长的标签，先对照 [04](docs/04-case-ismc-benign.md)——大占用不一定是泄漏。
+
+> 下面的"实测结论摘要"是给需要核验证据的读者的，只想解决问题可以跳过。
 
 ---
 
