@@ -10,7 +10,7 @@
 
 后面第 3、4 节的命令需要在**管理员 PowerShell** 里执行。打开方法（只需做一次）:
 
-1. 按键盘上的 Windows 键，直接输入 `powershell`;
+1. 按键盘上的 Windows 键，直接输入 `powershell`；
 2. 在搜索结果里**右键**"Windows PowerShell"，选"**以管理员身份运行**";
 3. 弹出"用户账户控制"询问时点"**是**"。
 
@@ -35,11 +35,11 @@
 
 ---
 
-## 3. 第二步：清除残留的 rtf64 驱动（卸载 OGH 不会带走它)
+## 3. 第二步：清除残留的 rtf64 驱动（卸载 OGH 不会带走它）
 
-**实测结论（Finding #8)**:`rtf64` 是独立注册的系统服务，OGH 的卸载器不管它——**只做第一步的话，RTLF 的 530 MB 还在**。
+**实测结论（Finding #8）**：`rtf64` 是独立注册的系统服务，OGH 的卸载器不管它——**只做第一步的话，RTLF 的 530 MB 还在**。
 
-在"管理员 PowerShell"（见第 0 节）里执行:
+在"管理员 PowerShell"（见第 0 节）里执行：
 
 ```powershell
 sc.exe config rtf64 start= disabled
@@ -49,7 +49,7 @@ sc.exe config rtf64 start= disabled
 
 然后**重启电脑**。重启后这个驱动不会再加载（实测：`RTLF` 归零，见 02 第 6 节）。
 
-两个常见疑问:
+两个常见疑问：
 
 - **"我在网卡属性里取消了 Realtek LightWeight Filter 的勾选，不行吗？"**——不行。取消勾选只断开绑定，服务本身照样开机加载；机制见 02 第 5 节。
 - **想连驱动文件一起删掉（可选，更彻底）**:
@@ -69,7 +69,7 @@ sc.exe config rtf64 start= disabled
 python scripts/pooltag.py after.json
 ```
 
-对照下表:
+对照下表：
 
 | 看什么 | 预期 |
 |---|---|
