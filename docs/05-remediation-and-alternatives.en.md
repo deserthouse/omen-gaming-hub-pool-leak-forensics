@@ -63,11 +63,15 @@ python scripts/pooltag.py after.json
 
 | OGH feature | Replacement | Notes |
 |---|---|---|
-| Performance-mode switching | **Windows power plans** (Balanced / High performance / Ultimate Performance) | built in, zero install; switchable via `powercfg -setactive` |
-| Fan curves | **[FanControl](https://github.com/Rem0o/FanControl.Releases)** (open source) | check first: depends on whether your board's sensors are detected |
-| Hardware monitoring | Task Manager / LibreHardwareMonitor (open source) | **read the warning below** |
-| RGB lighting | **OpenRGB** (open source) / Windows 11 Dynamic Lighting | check first: [OpenRGB supported devices](https://openrgb.org) |
+| Performance modes / fan curves (OMEN-specific) | **[OmenMon](https://github.com/nmostefa/OmenMon)** (open source, built for OMEN machines) | check your model's support — see the boundary note below |
+| Performance-mode switching (generic) | **Windows power plans** (Balanced / High performance / Ultimate Performance) | built in, zero install; switchable via `powercfg -setactive` |
+| Fan curves (generic) | **[FanControl](https://github.com/Rem0o/FanControl.Releases)** (open source) | check first: depends on whether your board's sensors are detected |
+| Hardware monitoring | Task Manager / [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) (open source) | **read the warning below** |
+| RGB lighting | **[OpenRGB](https://openrgb.org)** (open source) / Windows 11 Dynamic Lighting | check first: [supported devices](https://openrgb.org) |
 | Remote game streaming | Steam Link / Moonlight (open source) | unrelated to the kernel; not implicated in these cases |
+| (Linux users) | `hp-wmi` kernel module (OMEN keyboard lighting / performance modes) | outside this repo's Windows scope; noted for completeness |
+
+> **Boundary note (author's note; per-model support not individually tested)**: the table above, and other OMEN open-source tools known to the community, generally support **OMEN generation 7 and later only**; **generation 6 and earlier have no mature open-source replacement today** — on those machines the corresponding features mean keeping the official tool or giving the feature up. Readers with older machines should check their exact model in each project's issues before removing OGH.
 
 > ⚠️ **Read before installing any replacement monitoring panel (this repo's core lesson)**: Case B's mechanism was "a monitor polls the GPU at a fixed cadence → driver allocations outpace frees". **Any** software that queries the GPU on a fixed schedule (RGB effects, FPS overlays, game assistants) can become the next such caller. Prefer tools with an adjustable polling interval, set it long, or simply install fewer panels.
 
