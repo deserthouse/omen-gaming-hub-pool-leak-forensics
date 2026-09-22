@@ -63,7 +63,7 @@ python scripts/pooltag.py after.json
 
 | OGH feature | Replacement | Notes |
 |---|---|---|
-| Performance modes / fan curves (OMEN-specific) | **[OmenMon](https://github.com/nmostefa/OmenMon)** (open source, built for OMEN machines) | check your model's support — see the boundary note below |
+| Performance modes / fan curves (OMEN-specific) | **[OmenMon](https://github.com/OmenMon/OmenMon)** (open source, built for OMEN machines) | check your model's support — see the boundary note below |
 | Performance-mode switching (generic) | **Windows power plans** (Balanced / High performance / Ultimate Performance) | built in, zero install; switchable via `powercfg -setactive` |
 | Fan curves (generic) | **[FanControl](https://github.com/Rem0o/FanControl.Releases)** (open source) | check first: depends on whether your board's sensors are detected |
 | Hardware monitoring | Task Manager / [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) (open source) | **read the warning below** |

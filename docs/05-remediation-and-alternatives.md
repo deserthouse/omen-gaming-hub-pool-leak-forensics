@@ -85,11 +85,15 @@ python scripts/pooltag.py after.json
 
 | OGH 功能 | 替代 | 说明 |
 |---|---|---|
-| 性能模式切换 | **Windows 电源计划**（平衡 / 高性能 / 卓越性能） | 系统自带，零安装；`powercfg -setactive` 可命令行切换 |
-| 风扇曲线 | **[FanControl](https://github.com/Rem0o/FanControl.Releases)**（开源） | 需自查：取决于主板传感器能否被识别 |
-| 硬件监控面板 | 任务管理器 / LibreHardwareMonitor（开源） | **先看下方警告** |
-| RGB 灯光 | **OpenRGB**（开源）/ Windows 11"动态光效" | 需自查：[OpenRGB 支持列表](https://openrgb.org) |
+| 性能模式 / 风扇曲线（OMEN 专用） | **[OmenMon](https://github.com/OmenMon/OmenMon)**（开源，专为 OMEN 机型） | 需自查机型支持范围，见下方边界声明 |
+| 性能模式切换（通用） | **Windows 电源计划**（平衡 / 高性能 / 卓越性能） | 系统自带，零安装；`powercfg -setactive` 可命令行切换 |
+| 风扇曲线（通用） | **[FanControl](https://github.com/Rem0o/FanControl.Releases)**（开源） | 需自查：取决于主板传感器能否被识别 |
+| 硬件监控面板 | 任务管理器 / [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)（开源） | **先看下方警告** |
+| RGB 灯光 | **[OpenRGB](https://openrgb.org)**（开源）/ Windows 11"动态光效" | 需自查：[支持列表](https://openrgb.org) |
 | 远程游戏串流 | Steam Link / Moonlight（开源） | 与内核无关，不涉及本案例机制 |
+| （Linux 用户） | `hp-wmi` 内核模块（OMEN 键盘灯 / 性能模式） | 与本仓库的 Windows 场景无关，仅备注 |
+
+> **边界声明（作者注，未逐一实测各项目对每个机型的支持）**：上表及目前社区已知的其他 OMEN 开源工具，普遍只支持**第 7 代及以后**的 OMEN 机型；**第 6 代及更早机型目前没有成熟的开源替代方案**——这些机器上，对应功能要么继续用官方工具，要么放弃该功能。旧机型读者请先到各项目的 issue 区确认自己的具体型号，再决定是否清理 OGH。
 
 > ⚠️ **装替代监控面板之前必读（本仓库的核心教训）**：案例 B 的机制是"监控进程高频轮询 GPU → 驱动的分配跟不上释放"。**任何**以固定频率查询 GPU 的软件（灯效、帧率悬浮窗、游戏助手）都可能成为下一个同样的泄漏源。优先选轮询频率可调的工具、把间隔调长，或者干脆少装监控面板。
 
