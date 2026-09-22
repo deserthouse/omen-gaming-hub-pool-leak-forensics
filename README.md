@@ -36,7 +36,7 @@ Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control ce
 
 > ⚠️ **Don't conflate the two**: in Case B the problem is the caller, not the driver; in Case A the driver itself is the problem and OGH merely delivered it.
 
-A third tag, `ismc` (317 MB), was proven **not a leak** — kept as the "big blob ≠ leak" counter-example (see doc 04).
+A third tag, `ismc` (317 MB), was proven **not a leak** — yet it is documented too (see doc 04): its free rate is 0%, making it look *more* like a leak than the real ones. Without this counter-example, the free-rate criterion alone would misidentify it.
 
 **No reinvention of basics**: the standard pool-tag workflow lives in the official docs — [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) and [PoolMonX](https://github.com/zodiacon/PoolMonX). This repo covers only what they **don't**: when you're about to misjudge, and which criteria prevent it.
 

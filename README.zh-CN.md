@@ -36,7 +36,7 @@
 
 > ⚠️ **两者机制相反**：案例 B 的问题在调用方，驱动本身正常；案例 A 的问题在驱动本身，OGH 只是安装来源。**不要把两者混为一谈。**
 
-第三个标签 `ismc`（317 MB）被证明**不是泄漏**——它作为"大块 ≠ 泄漏"的反例收录（见 04）。
+第三个标签 `ismc`（317 MB）被证明**不是泄漏**。它同样被收录（见 04），因为它的释放率为 0%、比真正的泄漏更"像"泄漏——不收录这个反例，释放率判据会把它误判进去。
 
 **基础流程不重复造轮子**：池标签排查的标准流程见微软官方文档 [Use PoolMon to find a kernel-mode memory leak](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/using-poolmon-to-find-a-kernel-mode-memory-leak) 与 [PoolMonX](https://github.com/zodiacon/PoolMonX)。本仓库只讲**官方教程没讲的**：什么时候会误判、用什么判据避免。
 
