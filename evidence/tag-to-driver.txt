@@ -1,0 +1,14 @@
+=== 案例标签的驱动归属（边界判定 + 匹配计数）===
+
+方法: scripts/pooltag.py 的映射算法 —— 在驱动二进制中搜 4 字符标签,
+      命中位置的相邻字节若是字母数字则拒绝(避免 Cont 命中 Content),
+      并输出匹配文件数: 1=可归属, 多=通用子串不可归属。
+
+  RTLF → rtf64x64.sys                          [1]  可归属
+  NVRM → nvlddmkm.sys, nvpcf.sys               [2]  NVIDIA 驱动
+  ismc → iaStorAC.sys                          [1]  Intel RST
+  cckT → sysdiag.sys                           [1]  (反例标签, 非泄漏)
+
+对照(修复前的错误):
+  朴素 findstr 首匹配: NVRM 被误报到 nvpcf.sys(跳过了 108MB 的主驱动 nvlddmkm)
+  朴素子串匹配:       Cont 命中 579 个文件(全是 Content/Control 假阳性)

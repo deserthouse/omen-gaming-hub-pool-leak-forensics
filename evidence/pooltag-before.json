@@ -1,0 +1,38 @@
+{
+  "_说明": "节选自全量池标签快照（约 3900 条），只保留案例涉及的标签。处置前（含泄漏期数据）。原始采集: NtQuerySystemInformation(SystemPoolTagInformation)",
+  "_np_total_bytes": 3700062960,
+  "tags": {
+    "NVRM": {
+      "np": 1899333440,
+      "np_alloc": 272073873,
+      "np_free": 266716218,
+      "p": 17217936,
+      "p_alloc": 7603124,
+      "p_free": 7350471
+    },
+    "RTLF": {
+      "np": 556400768,
+      "np_alloc": 62481,
+      "np_free": 6050,
+      "p": 0,
+      "p_alloc": 0,
+      "p_free": 0
+    },
+    "ismc": {
+      "np": 332292096,
+      "np_alloc": 3,
+      "np_free": 0,
+      "p": 0,
+      "p_alloc": 0,
+      "p_free": 0
+    },
+    "cckT": {
+      "np": 41335840,
+      "np_alloc": 2757245939,
+      "np_free": 2757042505,
+      "p": 224,
+      "p_alloc": 21084,
+      "p_free": 21080
+    }
+  }
+}

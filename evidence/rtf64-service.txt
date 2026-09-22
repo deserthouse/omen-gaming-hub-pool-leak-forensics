@@ -1,0 +1,27 @@
+=== rtf64 服务注册表与安装信息 ===
+
+采集方法: reg query + INF 检索（只读）
+
+  === 服务注册表 Services\rtf64 ===
+    DisplayName = @oem43.inf,%rtf64_Desc%;Realtek LightWeight Filter (NDIS6.40)
+    Description = @oem43.inf,%rtf64_Desc%;Realtek LightWeight Filter (NDIS6.40)
+    NdisMajorVersion = 6
+    NdisMinorVersion = 40
+    DriverMajorVersion = 3
+    DriverMinorVersion = 3
+    Type = 1
+    Start = 1
+    ErrorControl = 1
+    Tag = 15
+    ImagePath = \SystemRoot\system32\DRIVERS\rtf64x64.sys
+    Group = NDIS
+  === Control\Class 中含 nt_rtf64 的键 ===
+  === 全库搜索结果 ===
+  搜索结束: 找到 0 匹配。
+  === 安装 INF 文件 ===
+  C:\Windows\INF\oem43.inf
+
+解读:
+  · Start = 1 (SERVICE_SYSTEM_START), Group = NDIS → 系统启动即加载
+  · 显示名 Realtek LightWeight Filter (NDIS6.40), INF = oem43.inf
+  · 处置时服务已停止(SCM STATE=STOPPED, WIN32_EXIT_CODE=1077)

@@ -1,0 +1,30 @@
+{
+  "_说明": "节选自全量池标签快照（约 3900 条），只保留案例涉及的标签。处置后（重启后）。原始采集: NtQuerySystemInformation(SystemPoolTagInformation)",
+  "_np_total_bytes": 1276721888,
+  "tags": {
+    "NVRM": {
+      "np": 61679008,
+      "np_alloc": 19141232,
+      "np_free": 19091386,
+      "p": 1062224,
+      "p_alloc": 25859,
+      "p_free": 25639
+    },
+    "ismc": {
+      "np": 336666624,
+      "np_alloc": 3,
+      "np_free": 0,
+      "p": 0,
+      "p_alloc": 0,
+      "p_free": 0
+    },
+    "cckT": {
+      "np": 80438592,
+      "np_alloc": 55871246,
+      "np_free": 55474629,
+      "p": 176,
+      "p_alloc": 5628,
+      "p_free": 5625
+    }
+  }
+}

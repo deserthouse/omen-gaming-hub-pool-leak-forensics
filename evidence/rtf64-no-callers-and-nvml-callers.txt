@@ -1,0 +1,17 @@
+=== 调用方证据 ===
+
+一、RTLF 的通信链无人加载（孤儿驱动证据，处置时实测）:
+
+  tasklist /m RtBWCtrl.dll      → 无匹配（全机无进程加载）
+  tasklist /m RtFDrvIOCtrl.dll  → 无匹配（全机无进程加载）
+
+二、NVRM 的调用方（nvml.dll 消费者，处置时实测）:
+
+  === 2) 关键判定：nvml.dll 的消费者 ===
+  映像名称                       PID 模块
+  =========================================
+  OmenCommandCenterBackgrou    44468  nvml.dll
+
+解读:
+  · <主机名>CommandCenterBackground(OGH 后台进程) 是全机唯一 nvml.dll 消费者
+  · 对照: RTLF 的两级通信 DLL 均无加载者 → 无人调用的孤儿驱动

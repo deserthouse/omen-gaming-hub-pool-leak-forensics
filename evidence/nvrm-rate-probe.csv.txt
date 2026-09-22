@@ -1,0 +1,12 @@
+ts,phase,nvidia_sum_MB,NVRM_MB,total_MB,minutes  <- 原始 CSV（含表头）
+ts,phase,nvidia_sum_MB,NVRM_MB,total_MB,minutes
+2026-09-21 22:26:34,SELFTEST,83.13,59.09,1134.78,0.3
+2026-09-21 23:07:19,P0b_OGH_killed,85.38,59.99,1194.28,12.3
+2026-09-21 23:12:51,AFTER_OGH_2min_window,83.67,59.25,1239.83,0.1
+
+阶段说明:
+  SELFTEST               探针自检（处置后基线）
+  P0b_OGH_killed         结束 OGH 后台进程后 12.3 分钟窗口
+  AFTER_OGH_2min_window  再观察
+
+判定: 处置后 NVRM 稳定在 ~59 MB（对照处置前 71 小时累积 1.77 GB）。

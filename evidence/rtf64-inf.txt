@@ -1,0 +1,67 @@
+=== oem43.inf 关键内容（RTLF 安装 INF）===
+
+=== oem43.inf 关键内容摘录（RTLF 安装 INF）===
+来源: C:\Windows\INF\oem43.inf
+
+--- 头部与 [version] ---
+; rtf64x64.INF -- Realtek NDIS LightWeight Filter
+[version]
+Signature   	= "$Windows NT$"
+Class     	    = NetService
+ClassGUID  	    = {4D36E974-E325-11CE-BFC1-08002BE10318}
+Provider    	= %Realtek%
+DriverVer	    = 11/28/2025,3.15.1128.2025
+CatalogFile     = rtf64x64.cat
+
+--- 过滤器绑定拓扑（HKR ... Ndi\Interfaces）---
+HKR, Ndi\Interfaces,UpperRange,,"noupper"
+HKR, Ndi\Interfaces,LowerRange,,"nolower"
+HKR, Ndi\Interfaces, FilterMediaTypes,,"ethernet, wan, ppip"
+
+--- 服务安装段 ---
+DisplayName     = %rtf64_Desc%
+ServiceType     = 1 ;SERVICE_KERNEL_DRIVER
+StartType       = 1 ;SERVICE_SYSTEM_START
+ErrorControl    = 1 ;SERVICE_ERROR_NORMAL
+ServiceBinary   = %12%\rtf64x64.sys
+LoadOrderGroup  = NDIS
+Description     = %rtf64_Desc%
+AddReg          = DrvOption.reg, FilterSuppMaxMtuSize.reg
+
+--- Ndi 基本属性（FilterClass/FilterType/FilterRunType 等）---
+HKR, Ndi,FilterClass,, compression
+HKR, Ndi,FilterType,0x00010001,0x00000002
+HKR, Ndi,FilterRunType, 0x00010001, 1 ;this filter must run before any protocol can bind to the below miniport
+
+=== 解读 ===
+
+1. UpperRange = "noupper"、LowerRange = "nolower"
+   → NDIS 过滤器不暴露上层/下层接口，即【纯旁路监听层】：
+     它不向协议栈提供任何服务，也不依赖特定下层驱动。
+   ⇒ 实际含义：对 TCP/IP 等 协议 的绑定与否不影响网络连通性。
+     处置时"取消绑定"或"禁用服务"都不会断网。
+
+2. FilterMediaTypes = "ethernet, wan, ppip"
+   → 会挂到所有以太网/广域网/点对点协议适配器上。
+
+3. StartType = 1 (SERVICE_SYSTEM_START)、LoadOrderGroup = NDIS
+   → 系统启动即加载（早于多数驱动），不是按需加载。
+   ⇒ 解释了"为什么卸载 OGH 之后它还在系统里跑"：
+     它是独立的内核驱动服务，注册在 SCM，不随 OGH 卸载。
+
+4. Provider = %Realtek%（字符串表中为 Realtek）
+   → INF 层面的签名为 Realtek；与驱动二进制签名人一致。
+     "OMEN/HP 带入"的证据链在别处（OGH 依赖安装 + HP 社区多方印证），
+     本 INF 只证明驱动来自 Realtek。
+
+5. DriverVer = 11/28/2025, 3.15.1128.2025
+   → 驱动版本与编译日期（比 HP 社区 2022 年帖提到的 2021 版新，说明仍在更新）。
+
+6. FilterRunType = 1（修正第 1 条解读的补充）
+   → 1 = 可选过滤器（optional filter）。INF 原文注释写的是
+     "this filter must run before any protocol can bind"（必须在协议绑定前运行），
+     结合 FilterType=2（修改型过滤器）：
+     本过滤器的定位是【强制在网络栈最底层拦截/修改帧】。
+   ⇒ 处置提醒（重要）：FilterRunType=1 的过滤器【不能只取消绑定】，
+     必须禁用/删除 rtf64 服务本身，否则系统仍会在启动时加载它。
+     （这正是"取消勾选 LWF"对部分用户无效的原因。）
