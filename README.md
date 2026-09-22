@@ -104,3 +104,40 @@ python scripts/rate_probe.py phase1 30 30 --auto 6   # 自动挑 6 个非通用�
 ## License
 
 [MIT](LICENSE)
+
+---
+
+## English summary
+
+Forensics for **two independent nonpaged-pool leaks on an OMEN laptop (Windows 11)**, both traced back to **OMEN Gaming Hub (OGH)** — plus one big-looking tag that turned out to be benign. Full evidence chain, read-only scripts, no WDK required.
+
+### The two leaks (opposite mechanisms — don't conflate them)
+
+| | Case B · polling-caller leak | Case A · orphan-driver leak |
+|---|---|---|
+| Pool tag | `NVRM` | `RTLF` |
+| Peak | **1.77 GB** over 71 h | **530 MB** |
+| Leaking component | NVIDIA kernel driver (`nvlddmkm`) | Realtek NDIS LWF (`rtf64x64.sys`) |
+| OGH's role | **The caller** — its background process was the *only* `nvml.dll` consumer system-wide | **The installer** — shipped it as a Network Booster dependency, doesn't remove it on uninstall |
+| Mechanism | Driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees | **Nobody was calling it** — the driver leaks on its own |
+| Fix | Stop the caller (or uninstall OGH) | Disable/delete the `rtf64` service — unchecking the filter is **not** enough (`FilterRunType=1`, `StartType=1`) |
+
+Counter-example: `ismc` (317 MB, 3 allocs / 0 frees, **not growing**) — a static allocation held by Intel RST with no physical disks attached. Not a leak; don't touch it.
+
+### Four field criteria the official tutorials skip
+
+1. **Free rate, not alloc count** — a tag with 2.75 *billion* allocations and a 100% free rate is healthy churn, not a leak; `RTLF` leaked with only 62k allocations (9.7% freed).
+2. **Flat readings beat lower averages** — byte-identical consecutive readings after remediation are stronger evidence than a lower mean.
+3. **Tag→driver mapping needs boundary matching + hit counts** — naive `findstr` returns substring false positives (579 files for `Cont`) and stops at the first hit (mis-attributed `NVRM` to the wrong .sys).
+4. **For slow steady leaks, find the caller first** — `tasklist /m <api-dll>` (one line) identified the sole poller; replacing the driver a hundred times wouldn't have helped.
+
+### Repo layout
+
+- `docs/01-field-criteria.md` — the four criteria above, with measurement discipline (≥15 min windows, no disk scans during probing)
+- `docs/02-case-rtlf-orphan-driver.md` — orphan driver: WinpkFilter V2 renamed (PDB path proof), dead call chain, why unchecking the LWF fails
+- `docs/03-case-nvrm-polling-caller.md` — polling caller: unique `nvml.dll` consumer, three-phase stop-and-verify
+- `docs/04-case-ismc-benign.md` — the benign counter-example
+- `evidence/` — sanitized raw data (pool-tag snapshots, rate-probe CSV, INF excerpts, PDB extraction)
+- `scripts/` — four read-only tools (Python ctypes, no WDK/admin needed)
+
+Documentation is in Chinese; this summary plus the code/evidence (English throughout) should get you oriented. Disclaimer: single-machine measurements, no vendor affiliation, MIT license.
