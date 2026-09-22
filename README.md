@@ -3,7 +3,8 @@
 > **Two independent Windows nonpaged-pool leaks that ate gigabytes while Task Manager showed nothing — full evidence chains for a polling-caller leak and an orphan-driver leak, plus a big-looking tag that wasn't a leak at all.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
-[![中文文档](https://img.shields.io/badge/README-%E4%B8%AD%E6%96%87-0078D4.svg)](README.zh-CN.md)
+
+**English** · [简体中文](README.zh-CN.md)
 
 ---
 

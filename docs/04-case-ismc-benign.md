@@ -1,6 +1,6 @@
 # 04 · 案例 C（反例）：大块 ≠ 泄漏（ismc，317 MB）
 
-[English version](04-case-ismc-benign.en.md)
+**简体中文** · [English](04-case-ismc-benign.en.md)
 
 > **要点**：Top 列表里的大数字不一定在漏。判据一的释放率会把它标成"可疑"（0%），但它可能是**启动时一次性分配的静态持有**——处置它没有任何收益，反而有风险。
 

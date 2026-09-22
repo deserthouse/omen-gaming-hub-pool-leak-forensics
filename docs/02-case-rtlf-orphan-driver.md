@@ -1,6 +1,6 @@
 # 02 · 案例 A：孤儿驱动泄漏（RTLF，530 MB）
 
-[English version](02-case-rtlf-orphan-driver.en.md)
+**简体中文** · [English](02-case-rtlf-orphan-driver.en.md)
 
 > **要点**：卸载了软件 ≠ 清除了驱动。这个驱动在**没有任何进程调用**的情况下持续泄漏，而把它带进系统的软件卸载时根本不会带走它。
 

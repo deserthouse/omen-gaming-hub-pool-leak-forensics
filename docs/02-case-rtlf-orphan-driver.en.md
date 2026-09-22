@@ -1,6 +1,6 @@
 # 02 · Case A: The Orphan-Driver Leak (RTLF, 530 MB)
 
-[中文版](02-case-rtlf-orphan-driver.md)
+**English** · [简体中文](02-case-rtlf-orphan-driver.md)
 
 > **Key point**: uninstalling the software ≠ removing the driver. This driver kept leaking with **no process calling it at all**, and the software that brought it in doesn't take it away on uninstall.
 

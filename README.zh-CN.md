@@ -3,7 +3,8 @@
 > **Windows 非分页池被吃到数 GB、任务管理器却看不到元凶——两次独立泄漏的完整取证：调用方归因型与孤儿驱动型，外加一条"大块 ≠ 泄漏"的反例。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
-[![English](https://img.shields.io/badge/README-English-0078D4.svg)](README.md)
+
+**简体中文** · [English](README.md)
 
 ---
 
