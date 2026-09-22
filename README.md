@@ -50,15 +50,15 @@ A third tag, `ismc` (317 MB), was proven **not a leak** — kept as the "big blo
 
 | Doc | What's in it |
 |---|---|
-| [docs/01-field-criteria.md](docs/01-field-criteria.md) | **Four field criteria**: free rate, flat readings, mapping false positives, caller attribution (the parts official tutorials skip) |
-| [docs/02-case-rtlf-orphan-driver.md](docs/02-case-rtlf-orphan-driver.md) | **Case A**: orphan driver — renamed-framework tracing, dead call chain, why "unchecking" fails |
-| [docs/03-case-nvrm-polling-caller.md](docs/03-case-nvrm-polling-caller.md) | **Case B**: polling caller — one command finds the poller, stop it and the leak stops |
-| [docs/04-case-ismc-benign.md](docs/04-case-ismc-benign.md) | **Case C (counter-example)**: why a 317 MB block was left alone |
+| [docs/01-field-criteria.md](docs/01-field-criteria.en.md) · [中文](docs/01-field-criteria.md) | **Four field criteria**: free rate, flat readings, mapping false positives, caller attribution (the parts official tutorials skip) |
+| [docs/02-case-rtlf-orphan-driver.md](docs/02-case-rtlf-orphan-driver.en.md) · [中文](docs/02-case-rtlf-orphan-driver.md) | **Case A**: orphan driver — renamed-framework tracing, dead call chain, why "unchecking" fails |
+| [docs/03-case-nvrm-polling-caller.md](docs/03-case-nvrm-polling-caller.en.md) · [中文](docs/03-case-nvrm-polling-caller.md) | **Case B**: polling caller — one command finds the poller, stop it and the leak stops |
+| [docs/04-case-ismc-benign.md](docs/04-case-ismc-benign.en.md) · [中文](docs/04-case-ismc-benign.md) | **Case C (counter-example)**: why a 317 MB block was left alone |
 | [evidence/](evidence/) | sanitized raw evidence (snapshots, rate CSV, INF excerpts, PDB extraction) |
 | [scripts/](scripts/) | read-only diagnostic tools (no WDK; Python ctypes straight into the kernel API) |
 | [DISCLAIMER.md](DISCLAIMER.md) | scope statement |
 
-Docs are written in Chinese — the tables, code, and evidence are language-neutral, and the criteria above carry the methodology. A [full Chinese README](README.zh-CN.md) is available.
+Every doc is available in both English (`*.en.md`) and Chinese (`*.md`) — switch languages via the link at the top of each page.
 
 ---
 
@@ -88,7 +88,7 @@ All four only call `NtQuerySystemInformation` queries and **read** driver binari
 Same rules as the author's other forensics repo ([alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)):
 
 1. **Every conclusion ships with reproducible evidence** — command, raw output, or data table.
-2. **Three statement grades**: **measured** (persisted raw data) / **inferred** (reasoned from evidence, basis stated) / **historical observation** (seen but not persisted; re-verification method given). Finding #9 is the repo's only historical observation, labeled as such.
+2. **Three statement grades**: **measured** (persisted raw data) / **inferred** (reasoned from evidence, basis stated) / **historical observation** (seen but not persisted; re-verification method given). There are exactly two historical observations, both labeled: Finding #9 below, plus the flat-reading note inside doc 03.
 3. **Correlation ≠ causation** — temporal coincidence is a lead, not a conclusion.
 4. **Naming facts, not motives**: OGH is named because it is the proven common entry point of both leaks; Realtek's and NVIDIA's roles are stated per evidence, with no attribution of intent.
 

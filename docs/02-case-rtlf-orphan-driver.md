@@ -1,5 +1,7 @@
 # 02 · 案例 A：孤儿驱动泄漏（RTLF，530 MB）
 
+[English version](02-case-rtlf-orphan-driver.en.md)
+
 **要点**：卸载了软件 ≠ 清除了驱动。这个驱动在**没有任何进程调用**的情况下持续泄漏，而把它带进系统的软件卸载时根本不会带走它。
 
 ---
@@ -107,7 +109,7 @@ sc.exe config rtf64 start= disabled
 
 ## 7. ⚠️ 历史观察（未落盘）
 
-处置前曾观察到设备对象 `\Device\RTF64` 的 DACL 允许 **Everyone (WD) 可读写**——任何本地进程都能直接与该驱动通信。该观察发生在处置当日的会话中，**未落盘为证据文件**；处置后驱动不再加载、设备对象不存在（复验脚本 `tests` 目录留档：`sc start rtf64` 后用 `NtOpenFile + NtQuerySecurityObject` 可取 SDDL）。本仓库按证据纪律将其标为**历史观察**，不参与结论链。
+处置前曾观察到设备对象 `\Device\RTF64` 的 DACL 允许 **Everyone (WD) 可读写**——任何本地进程都能直接与该驱动通信。该观察发生在处置当日的会话中，**未落盘为证据文件**；处置后驱动不再加载、设备对象不存在。复验方法（如需核实）：临时 `sc start rtf64` 拉起服务后，以 `NtOpenFile + NtQuerySecurityObject` 读取 `\Device\RTF64` 的 SDDL 即可。本仓库按证据纪律将其标为**历史观察**，不参与结论链。
 
 ## 8. 证据清单
 

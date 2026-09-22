@@ -50,13 +50,15 @@
 
 | 文档 | 内容 |
 |---|---|
-| [docs/01-field-criteria.md](docs/01-field-criteria.md) | **四条实战判据**：释放率、平坦读数、映射假阳性、调用方归因（官方教程没讲的部分） |
-| [docs/02-case-rtlf-orphan-driver.md](docs/02-case-rtlf-orphan-driver.md) | **案例 A**：孤儿驱动泄漏——改名溯源、断链证据、为什么"取消勾选"没用 |
-| [docs/03-case-nvrm-polling-caller.md](docs/03-case-nvrm-polling-caller.md) | **案例 B**：调用方触发的泄漏——一行命令找到轮询者，停掉即归零 |
-| [docs/04-case-ismc-benign.md](docs/04-case-ismc-benign.md) | **案例 C（反例）**：317 MB 的大块为什么放着不动 |
+| [docs/01-field-criteria.md](docs/01-field-criteria.md) · [EN](docs/01-field-criteria.en.md) | **四条实战判据**：释放率、平坦读数、映射假阳性、调用方归因（官方教程没讲的部分） |
+| [docs/02-case-rtlf-orphan-driver.md](docs/02-case-rtlf-orphan-driver.md) · [EN](docs/02-case-rtlf-orphan-driver.en.md) | **案例 A**：孤儿驱动泄漏——改名溯源、断链证据、为什么"取消勾选"没用 |
+| [docs/03-case-nvrm-polling-caller.md](docs/03-case-nvrm-polling-caller.md) · [EN](docs/03-case-nvrm-polling-caller.en.md) | **案例 B**：调用方触发的泄漏——一行命令找到轮询者，停掉即归零 |
+| [docs/04-case-ismc-benign.md](docs/04-case-ismc-benign.md) · [EN](docs/04-case-ismc-benign.en.md) | **案例 C（反例）**：317 MB 的大块为什么放着不动 |
 | [evidence/](evidence/) | 脱敏后的原始证据（快照 JSON、速率 CSV、INF 摘录、PDB 提取输出） |
 | [scripts/](scripts/) | 只读诊断脚本（免 WDK，Python ctypes 直调内核接口） |
 | [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明 |
+
+每篇文档均有中英两版（中文 `*.md` / 英文 `*.en.md`），页面顶部可互相切换。
 
 ---
 
@@ -86,7 +88,7 @@ python scripts/rate_probe.py phase1 30 30 --auto 6   # 自动挑 6 个非通用�
 与作者的另一个取证仓库（[alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)）遵循同一套纪律：
 
 1. **结论必须带可复现的证据**——每个判断附命令、原始输出或数据表。
-2. **区分三级陈述**：**实测事实**（有落盘原始数据）/ **推断**（由证据合理推出，注明依据）/ **历史观察**（当时见过但未落盘，注明复验方法）。第 9 条是本仓库唯一一条"历史观察"，如实标注。
+2. **区分三级陈述**：**实测事实**（有落盘原始数据）/ **推断**（由证据合理推出，注明依据）/ **历史观察**（当时见过但未落盘，注明复验方法）。"历史观察"共两处，均已标注：摘要表第 9 条，以及 03 文档内的平坦读数注记。
 3. **区分「关联」与「因果」**——时间吻合只是线索。
 4. **点名的是事实，不是定性**：本仓库点名 OMEN Gaming Hub 是因为两个泄漏的共同入口都是它（有实证）；Realtek 与 NVIDIA 各自的角色按证据陈述，不做动机推断。
 

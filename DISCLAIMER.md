@@ -24,6 +24,11 @@
 文档中的处置步骤（禁用服务等）**会修改系统配置**，基于单机实测，
 不同机型/驱动版本可能不同。执行前请自行评估并创建还原点。
 
+### 关于 AI 参与
+
+本仓库的排查过程、证据整理与文稿撰写由 AI 深度参与完成；
+研究方向、关键决策与最终验收由人类作者负责。
+
 ### 表述纪律
 
 | 等级 | 含义 |
@@ -44,3 +49,9 @@ Forensic analysis of Windows kernel pool (nonpaged pool) leaks on the author's o
 OMEN laptop. OMEN Gaming Hub is named because it is the common entry point of both
 leaks (with evidence); the roles of Realtek / NVIDIA / Intel are stated per evidence.
 No vendor affiliation or endorsement. All scripts are read-only. MIT licensed, no warranty.
+
+### On AI assistance
+
+The investigation, evidence handling, and write-up of this repository were produced
+with deep AI assistance; research direction, key decisions, and final acceptance
+were the human author's responsibility.

@@ -1,5 +1,7 @@
 # 03 · 案例 B：调用方触发的泄漏（NVRM，1.77 GB）
 
+[English version](03-case-nvrm-polling-caller.en.md)
+
 **要点**：匀速泄漏的驱动往往是无辜的执行者。先花 10 秒查"谁在调用它"，可能省掉一次无意义的驱动重装。
 
 ---
