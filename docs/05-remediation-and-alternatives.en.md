@@ -79,4 +79,6 @@ After uninstalling OGH, some of its features can be covered by the open-source p
 
 ---
 
+Further reading: [06 · Appendix: open-source alternatives — status & boundaries](06-open-source-alternatives.en.md)
+
 Prev: [04 · Case C: big blob ≠ leak](04-case-ismc-benign.en.md)
