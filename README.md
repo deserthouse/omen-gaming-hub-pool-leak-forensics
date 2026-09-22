@@ -22,6 +22,8 @@
 
 ## What this is
 
+> **Note for visitors new to this repo**: this is a troubleshooting casebook for OMEN Gaming Hub memory leaks. If your machine has (or had) OGH installed and shows similar symptoms — memory climbing with no process to blame in Task Manager — start with [Is this the problem you're seeing?](#is-this-the-problem-youre-seeing); the case docs provide the full diagnosis and remediation steps to follow.
+
 An OMEN laptop (i7 / 32 GB / Win11) showed a **3.9 GB nonpaged pool** with no process in Task Manager to explain it, slowly recurring after reboots. This repo documents how the problem was traced to specific drivers **and specific callers**, with the criteria, raw data, and read-only tooling to reproduce the analysis.
 
 Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control center)** — but their mechanisms are **opposite**:
