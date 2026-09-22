@@ -92,6 +92,7 @@ In the top list: `RTLF`, or `NVRM` that is growing → follow the [remediation g
 | [03 · Case B: polling caller](docs/03-case-nvrm-polling-caller.en.md) · [中文](docs/03-case-nvrm-polling-caller.md) | one command finds the poller, stop it and the leak stops |
 | [04 · Case C: big blob ≠ leak](docs/04-case-ismc-benign.en.md) · [中文](docs/04-case-ismc-benign.md) | counter-example: why a 317 MB block was left alone |
 | [05 · Remediation](docs/05-remediation-and-alternatives.en.md) · [中文](docs/05-remediation-and-alternatives.md) | operational guide: uninstall OGH, remove the leftover rtf64 driver, verify, alternatives to OGH features |
+| [06 · Appendix: open-source alternatives](docs/06-open-source-alternatives.en.md) · [中文](docs/06-open-source-alternatives.md) | status, model-support boundaries, benefits and risks of each alternative |
 | [evidence/](evidence/) | sanitized raw evidence (snapshots, rate CSV, INF excerpts, PDB extraction) |
 | [scripts/](scripts/) | read-only diagnostic tools (no WDK; Python ctypes straight into the kernel API) |
 | [DISCLAIMER.md](DISCLAIMER.md) | scope statement |

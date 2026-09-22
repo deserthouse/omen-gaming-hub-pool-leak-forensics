@@ -92,6 +92,7 @@ python scripts/pooltag.py snapshot.json
 | [03 · 案例 B：调用方触发的泄漏](docs/03-case-nvrm-polling-caller.md) · [EN](docs/03-case-nvrm-polling-caller.en.md) | 一行命令找到轮询者，停掉即归零 |
 | [04 · 案例 C：大块 ≠ 泄漏](docs/04-case-ismc-benign.md) · [EN](docs/04-case-ismc-benign.en.md) | 反例：317 MB 的大块为什么不处置 |
 | [05 · 修复：卸载与替代方案](docs/05-remediation-and-alternatives.md) · [EN](docs/05-remediation-and-alternatives.en.md) | 操作指引：卸载 OGH、清除残留 rtf64 驱动、验证、OGH 功能的替代方案 |
+| [06 · 附录：开源替代项目现状与边界](docs/06-open-source-alternatives.md) · [EN](docs/06-open-source-alternatives.en.md) | 各替代项目的现状、机型支持边界、收益与风险 |
 | [evidence/](evidence/) | 脱敏后的原始证据（快照 JSON、速率 CSV、INF 摘录、PDB 提取输出） |
 | [scripts/](scripts/) | 只读诊断脚本（免 WDK，Python ctypes 直调内核接口） |
 | [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明 |
