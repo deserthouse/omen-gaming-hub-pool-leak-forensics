@@ -58,7 +58,7 @@ One command tells you which case you have (the [scripts](scripts/) are read-only
 python scripts/pooltag.py snapshot.json
 ```
 
-In the top list: `RTLF` → follow [doc 02](docs/02-case-rtlf-orphan-driver.en.md) (disable the `rtf64` service); `NVRM` and growing → follow [doc 03](docs/03-case-nvrm-polling-caller.en.md) (stop the OGH background). A big tag that is *not* growing — check [doc 04](docs/04-case-ismc-benign.en.md) first: a large allocation is not necessarily a leak.
+In the top list: `RTLF`, or `NVRM` that is growing → follow the [remediation guide](docs/05-remediation-and-alternatives.en.md) (uninstall OGH, remove the leftover driver, verify); for why, see [doc 02](docs/02-case-rtlf-orphan-driver.en.md) / [doc 03](docs/03-case-nvrm-polling-caller.en.md). A big tag that is *not* growing — check [doc 04](docs/04-case-ismc-benign.en.md) first: a large allocation is not necessarily a leak.
 
 > The findings table below is for readers who want to verify the evidence — skip it if you just want the fix.
 
@@ -89,6 +89,7 @@ In the top list: `RTLF` → follow [doc 02](docs/02-case-rtlf-orphan-driver.en.m
 | [02 · Case A: orphan driver](docs/02-case-rtlf-orphan-driver.en.md) · [中文](docs/02-case-rtlf-orphan-driver.md) | renamed-framework tracing (PDB), dead call chain, why "unchecking" fails |
 | [03 · Case B: polling caller](docs/03-case-nvrm-polling-caller.en.md) · [中文](docs/03-case-nvrm-polling-caller.md) | one command finds the poller, stop it and the leak stops |
 | [04 · Case C: big blob ≠ leak](docs/04-case-ismc-benign.en.md) · [中文](docs/04-case-ismc-benign.md) | counter-example: why a 317 MB block was left alone |
+| [05 · Remediation](docs/05-remediation-and-alternatives.en.md) · [中文](docs/05-remediation-and-alternatives.md) | operational guide: uninstall OGH, remove the leftover rtf64 driver, verify, alternatives to OGH features |
 | [evidence/](evidence/) | sanitized raw evidence (snapshots, rate CSV, INF excerpts, PDB extraction) |
 | [scripts/](scripts/) | read-only diagnostic tools (no WDK; Python ctypes straight into the kernel API) |
 | [DISCLAIMER.md](DISCLAIMER.md) | scope statement |

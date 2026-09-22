@@ -64,4 +64,4 @@ Together with Cases A and B this forms a complete decision matrix:
 
 ---
 
-Prev: [03 · Case B: the polling-caller leak](03-case-nvrm-polling-caller.en.md)
+Prev: [03 · Case B: the polling-caller leak](03-case-nvrm-polling-caller.en.md) ｜ Next: [05 · Remediation](05-remediation-and-alternatives.en.md)

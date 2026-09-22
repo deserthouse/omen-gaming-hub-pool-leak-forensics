@@ -58,7 +58,7 @@
 python scripts/pooltag.py snapshot.json
 ```
 
-看 Top 列表：出现 `RTLF` → 按 [02](docs/02-case-rtlf-orphan-driver.md) 处置（禁用 `rtf64` 服务）；出现 `NVRM` 且在增长 → 按 [03](docs/03-case-nvrm-polling-caller.md) 处置（停掉 OGH 后台）。只出现在列表里但不增长的标签，先对照 [04](docs/04-case-ismc-benign.md)——大占用不一定是泄漏。
+看 Top 列表：出现 `RTLF`、或出现 `NVRM` 且在增长 → 按 [05 修复指南](docs/05-remediation-and-alternatives.md)操作（卸载 OGH + 清除残留驱动 + 验证）；为什么这么修，见 [02](docs/02-case-rtlf-orphan-driver.md) / [03](docs/03-case-nvrm-polling-caller.md)。只出现在列表里但不增长的标签，先对照 [04](docs/04-case-ismc-benign.md)——大占用不一定是泄漏。
 
 > 下面的"实测结论摘要"是给需要核验证据的读者的，只想解决问题可以跳过。
 
@@ -89,6 +89,7 @@ python scripts/pooltag.py snapshot.json
 | [02 · 案例 A：孤儿驱动泄漏](docs/02-case-rtlf-orphan-driver.md) · [EN](docs/02-case-rtlf-orphan-driver.en.md) | 改名溯源（PDB）、断链证据、为什么"取消勾选"没用 |
 | [03 · 案例 B：调用方触发的泄漏](docs/03-case-nvrm-polling-caller.md) · [EN](docs/03-case-nvrm-polling-caller.en.md) | 一行命令找到轮询者，停掉即归零 |
 | [04 · 案例 C：大块 ≠ 泄漏](docs/04-case-ismc-benign.md) · [EN](docs/04-case-ismc-benign.en.md) | 反例：317 MB 的大块为什么不处置 |
+| [05 · 修复：卸载与替代方案](docs/05-remediation-and-alternatives.md) · [EN](docs/05-remediation-and-alternatives.en.md) | 操作指引：卸载 OGH、清除残留 rtf64 驱动、验证、OGH 功能的替代方案 |
 | [evidence/](evidence/) | 脱敏后的原始证据（快照 JSON、速率 CSV、INF 摘录、PDB 提取输出） |
 | [scripts/](scripts/) | 只读诊断脚本（免 WDK，Python ctypes 直调内核接口） |
 | [DISCLAIMER.md](DISCLAIMER.md) | 使用范围声明 |

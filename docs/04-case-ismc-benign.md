@@ -64,4 +64,4 @@
 
 ---
 
-上一篇：[03 · 案例 B：调用方触发的泄漏](03-case-nvrm-polling-caller.md)
+上一篇：[03 · 案例 B：调用方触发的泄漏](03-case-nvrm-polling-caller.md) ｜ 下一篇：[05 · 修复：卸载与替代方案](05-remediation-and-alternatives.md)
