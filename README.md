@@ -79,7 +79,7 @@ In the top list: `RTLF`, or `NVRM` that is growing → follow the [remediation g
 | 9 | Device `\Device\RTF64`'s DACL allowed Everyone read/write | pre-remediation session observation (**not persisted**; re-verification method included) | ⚠️ historical observation |
 | 10 | `ismc`'s 317 MB is a static hold (3 allocs / 0 frees, **not growing**) — not a leak | two-point snapshot comparison | ✅ measured |
 
-**One-paragraph summary**: both leak sources were located and remediated — `RTLF` (530 MB) is a network-filter driver OGH bundles, leaves behind on uninstall, and leaks with no caller at all; `NVRM` (1.77 GB over 71 hours) was caused by OGH's background monitor polling the NVIDIA driver at a fixed cadence. The fix = uninstall OGH + manually disable the rtf64 driver + reboot — see the [remediation guide](docs/05-remediation-and-alternatives.en.md); the third big block, `ismc` (317 MB), is not a leak — leave it alone.
+ both leak sources were located and remediated — `RTLF` (530 MB) is a network-filter driver OGH bundles, leaves behind on uninstall, and leaks with no caller at all; `NVRM` (1.77 GB over 71 hours) was caused by OGH's background monitor polling the NVIDIA driver at a fixed cadence. The fix = uninstall OGH + manually disable the rtf64 driver + reboot — see the [remediation guide](docs/05-remediation-and-alternatives.en.md); the third big block, `ismc` (317 MB), is not a leak — leave it alone.
 
 ---
 

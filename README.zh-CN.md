@@ -79,7 +79,7 @@ python scripts/pooltag.py snapshot.json
 | 9 | 设备 `\Device\RTF64` 的 DACL 允许 Everyone 读写 | 处置前会话观察（**未落盘**，复验方法已附） | ⚠️ 历史观察 |
 | 10 | `ismc` 317 MB 为静态持有（3 次分配 0 释放，**不随时间增长**），非泄漏 | 双时点快照对比 | ✅ 实测 |
 
-**一段话总结**：两个泄漏源都已定位并处置——`RTLF`（530 MB）是 OGH 捆绑安装、卸载不带走、无人调用也在泄漏的网络过滤器驱动；`NVRM`（71 小时累积 1.77 GB）是 OGH 后台监控高频轮询 NVIDIA 驱动所致。修复 = 卸载 OGH + 手动禁用 rtf64 驱动 + 重启，见 [05 修复指南](docs/05-remediation-and-alternatives.md)；第三个大块 `ismc`（317 MB）不是泄漏，不要动。
+两个泄漏源都已定位并处置——`RTLF`（530 MB）是 OGH 捆绑安装、卸载不带走、无人调用也在泄漏的网络过滤器驱动；`NVRM`（71 小时累积 1.77 GB）是 OGH 后台监控高频轮询 NVIDIA 驱动所致。修复 = 卸载 OGH + 手动禁用 rtf64 驱动 + 重启，见 [05 修复指南](docs/05-remediation-and-alternatives.md)；第三个大块 `ismc`（317 MB）不是泄漏，不要动。
 
 ---
 
