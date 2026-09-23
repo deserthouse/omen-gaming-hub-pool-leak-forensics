@@ -30,10 +30,10 @@ Three consequences:
 
 ## 3. Model-support boundaries (the important part)
 
-**OMEN open-source tools generally support only newer models.** OmenXHub's official list:
+**OMEN open-source tools generally support only newer models.** OmenXHub's official list (**a 2026-09 snapshot; it will age — check each repo**):
 
-- ✅ confirmed: Shadow/Pavilion Gaming 8/8 Plus/9/9 Plus/10 series, Victus 10, OMEN 16 (Ryzen), OMEN 15, and more
-- ❌ explicitly unsupported: Shadow 6 and similar older generations
+- ✅ confirmed: Shadow 8 / 8 Plus / 8 Plus Plus / 9 / 9 Plus / 10 series, Victus 10, OMEN 16 (Ryzen), OMEN 15, OMEN Phantom Gaming
+- ❌ explicitly unsupported: Shadow 6 and similar older generations (**generation 6 and earlier have no mature open-source replacement overall** — on those machines the features mean keeping the official tool or giving them up)
 - ⚠️ author's own words: "developed mainly for OMEN 10 Intel (i7-13650HX + RTX 4070); compatibility on other platforms not guaranteed" — **off-platform machines (e.g. 10th-gen Comet Lake OMEN 15) are in the "test it yourself" zone**
 
 **Same conclusion as doc 05: search each project's issues for your exact model before installing.**

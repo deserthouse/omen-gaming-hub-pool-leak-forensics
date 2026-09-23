@@ -61,9 +61,7 @@ python scripts/pooltag.py after.json
 
 ## 5. Alternatives
 
-⚠️ **This section is not verified on this machine** — generic replacements by function slot; for items marked "check first", confirm support for your model.
-
-After uninstalling OGH, some of its features can be covered by the open-source projects below. **Two caveats: they only partially implement OGH's features, and they may not support every model** (check your model in each project's issues before relying on one).
+After uninstalling OGH, some of its features can be covered by the open-source projects below. ⚠️ **Not verified on this machine**, and two caveats: they only **partially** implement OGH's features, and **may not support your model** — community OMEN open-source tools generally support newer machines only (generation 6 and earlier have no mature replacement today). Search each project's issues for your exact model before relying on one; project status, model boundaries, and risks are covered in [the doc-06 appendix](06-open-source-alternatives.en.md).
 
 | Project | Features it can cover |
 |---|---|
@@ -72,8 +70,6 @@ After uninstalling OGH, some of its features can be covered by the open-source p
 | [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) | hardware monitoring (**read the warning below**) |
 | [OpenRGB](https://openrgb.org) | RGB lighting |
 | Steam Link / Moonlight | remote game streaming |
-
-> **Boundary note (author's note; per-model support not individually tested)**: the table above, and other OMEN open-source tools known to the community, generally support **OMEN generation 7 and later only**; **generation 6 and earlier have no mature open-source replacement today** — on those machines the corresponding features mean keeping the official tool or giving the feature up. On generation 6 or earlier, confirm you're willing to give up those features before removing OGH.
 
 > ⚠️ **Read before installing any replacement monitoring panel (this repo's core lesson)**: Case B's mechanism was "a monitor polls the GPU at a fixed cadence → driver allocations outpace frees". **Any** software that queries the GPU on a fixed schedule (RGB effects, FPS overlays, game assistants) can become the next such caller. Prefer tools with an adjustable polling interval, set it long, or simply install fewer panels.
 
