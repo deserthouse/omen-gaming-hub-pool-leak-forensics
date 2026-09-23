@@ -83,20 +83,10 @@ python scripts/pooltag.py after.json
 
 ## 5. 替代方案
 
-OGH 卸载后，它的部分功能可以用下面这些开源项目补上。⚠️ **本节未在本机实证**，且有两个前提：它们只能**部分**实现 OGH 的功能，且**可能不支持你的机型**——社区 OMEN 开源工具普遍只支持较新的机型（第 6 代及更早目前没有成熟替代）。装之前先到各项目 issue 区搜自己的具体型号；项目现状、机型边界与风险详见[第 06 篇附录](06-open-source-alternatives.md)。
+OGH 卸载后，它的部分功能可以用社区开源项目补上——但它们只能**部分**实现 OGH 的功能、且可能不支持你的机型（第 6 代及更早目前没有成熟替代），**未在本机实证**。项目清单、机型边界与风险详见[第 06 篇附录](06-open-source-alternatives.md)。
 
-| 项目 | 能补上的功能 |
-|---|---|
-| [OmenMon](https://github.com/OmenMon/OmenMon)（专为 OMEN 机型） | 性能模式 / 风扇 / 背光 |
-| [FanControl](https://github.com/Rem0o/FanControl.Releases) | 风扇曲线 |
-| [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) | 硬件监控（**先看下方警告**） |
-| [OpenRGB](https://openrgb.org) | RGB 灯光 |
-| Steam Link / Moonlight | 远程游戏串流 |
-
-> ⚠️ **装替代监控面板之前必读（本仓库的核心教训）**：案例 B 的机制是"监控进程高频轮询 GPU → 驱动的分配跟不上释放"。**任何**以固定频率查询 GPU 的软件（灯效、帧率悬浮窗、游戏助手）都可能成为下一个同样的泄漏源。优先选轮询频率可调的工具、把间隔调长，或者干脆少装监控面板。
+> ⚠️ 那篇附录里有一条必读警告：**装任何替代监控面板之前，重读案例 B**——固定频率轮询 GPU 的软件（灯效、帧率悬浮窗、游戏助手）都可能成为下一个同样的泄漏源。
 
 ---
-
-展开阅读：[06 · 附录：开源替代项目现状与边界](06-open-source-alternatives.md)
 
 上一篇：[04 · 案例 C：大块 ≠ 泄漏](04-case-ismc-benign.md)

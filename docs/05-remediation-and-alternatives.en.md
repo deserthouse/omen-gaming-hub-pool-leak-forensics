@@ -61,20 +61,10 @@ python scripts/pooltag.py after.json
 
 ## 5. Alternatives
 
-After uninstalling OGH, some of its features can be covered by the open-source projects below. ⚠️ **Not verified on this machine**, and two caveats: they only **partially** implement OGH's features, and **may not support your model** — community OMEN open-source tools generally support newer machines only (generation 6 and earlier have no mature replacement today). Search each project's issues for your exact model before relying on one; project status, model boundaries, and risks are covered in [the doc-06 appendix](06-open-source-alternatives.en.md).
+After uninstalling OGH, some of its features can be covered by community open-source projects — but they only **partially** implement OGH's features, may not support your model (generation 6 and earlier have no mature replacement today), and are **not verified on this machine**. The project list, model boundaries, and risks live in [the doc-06 appendix](06-open-source-alternatives.en.md).
 
-| Project | Features it can cover |
-|---|---|
-| [OmenMon](https://github.com/OmenMon/OmenMon) (built for OMEN machines) | performance modes / fans / backlight |
-| [FanControl](https://github.com/Rem0o/FanControl.Releases) | fan curves |
-| [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) | hardware monitoring (**read the warning below**) |
-| [OpenRGB](https://openrgb.org) | RGB lighting |
-| Steam Link / Moonlight | remote game streaming |
-
-> ⚠️ **Read before installing any replacement monitoring panel (this repo's core lesson)**: Case B's mechanism was "a monitor polls the GPU at a fixed cadence → driver allocations outpace frees". **Any** software that queries the GPU on a fixed schedule (RGB effects, FPS overlays, game assistants) can become the next such caller. Prefer tools with an adjustable polling interval, set it long, or simply install fewer panels.
+> ⚠️ That appendix carries one must-read warning: **before installing any replacement monitoring panel, re-read Case B** — any software that queries the GPU on a fixed schedule (RGB effects, FPS overlays, game assistants) can become the next such leak source.
 
 ---
-
-Further reading: [06 · Appendix: open-source alternatives — status & boundaries](06-open-source-alternatives.en.md)
 
 Prev: [04 · Case C: big blob ≠ leak](04-case-ismc-benign.en.md)

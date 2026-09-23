@@ -2,10 +2,22 @@
 
 **简体中文** · [English](06-open-source-alternatives.en.md)
 
-> 本文是 [05 修复篇](05-remediation-and-alternatives.md)第 5 节的展开版：那边的表格回答"装什么"，本文回答"**这些项目到底是什么现状、适配哪些机器、边界在哪、有什么坑**"。
+> 本文承接 [05 修复篇](05-remediation-and-alternatives.md)第 5 节：那边只说"有替代、去看附录"，本文回答"**装什么、这些项目是什么现状、适配哪些机器、边界在哪、有什么坑**"。
 > ⚠️ 本文为**调研记录**（2026-09，基于各项目 README/发布说明与官方支持列表，未在本机逐一实测），时效性有限——装之前请到各项目仓库核实最新状态。
 
 ---
+
+## 0. 按功能位选：装什么
+
+⚠️ **以下均未在本机实证**。它们只能部分实现 OGH 的功能，且可能不支持你的机型（见第 3 节边界）。
+
+| 功能位 | 项目 |
+|---|---|
+| 性能模式 / 风扇 / 背光（OMEN 专属） | [OmenMon](https://github.com/OmenMon/OmenMon)（或下表的 OmenSuperHub / OmenXHub） |
+| 风扇曲线（通用） | [FanControl](https://github.com/Rem0o/FanControl.Releases) |
+| 硬件监控（通用） | [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)（**先看文末警告**） |
+| RGB 灯光 | [OpenRGB](https://openrgb.org) / Windows 11"动态光效" |
+| 远程游戏串流 | Steam Link / Moonlight |
 
 ## 1. 项目现状一览
 
@@ -62,6 +74,6 @@
 
 ---
 
-> ⚠️ 再次提醒 05 篇的核心警告：**装任何替代监控面板前，重读案例 B**——固定频率轮询 GPU 的软件都可能成为下一个"调用方泄漏源"。开源监控面板同理，优先选轮询间隔可调的工具并把间隔调长。
+> ⚠️ **装任何替代监控面板之前必读（本仓库的核心教训）**：案例 B 的机制是"监控进程高频轮询 GPU → 驱动的分配跟不上释放"。**任何**以固定频率查询 GPU 的软件（灯效、帧率悬浮窗、游戏助手，包括上面这些开源面板）都可能成为下一个同样的泄漏源。优先选轮询间隔可调的工具、把间隔调长，或者干脆少装监控面板。详见[案例 B](03-case-nvrm-polling-caller.md)。
 
 上一篇：[05 · 修复：卸载与替代方案](05-remediation-and-alternatives.md)

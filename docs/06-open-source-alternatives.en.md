@@ -2,10 +2,22 @@
 
 **English** · [简体中文](06-open-source-alternatives.md)
 
-> This expands §5 of the [remediation doc](05-remediation-and-alternatives.en.md): the table there answers "what to install"; this doc answers "**what these projects actually are, which machines they cover, where the boundaries are, and the traps**".
+> This continues §5 of the [remediation doc](05-remediation-and-alternatives.en.md): that section only says "alternatives exist, see the appendix"; this doc answers "**what to install, what these projects actually are, which machines they cover, where the boundaries are, and the traps**".
 > ⚠️ A **research note** (2026-09, based on each project's README/release notes and official support lists; not individually tested on this machine) — verify current status in each repo before installing.
 
 ---
+
+## 0. Pick by function slot: what to install
+
+⚠️ **None of the following is verified on this machine**. They only partially implement OGH's features and may not support your model (see §3 boundaries).
+
+| Function slot | Project |
+|---|---|
+| Performance modes / fans / backlight (OMEN-specific) | [OmenMon](https://github.com/OmenMon/OmenMon) (or OmenSuperHub / OmenXHub in the table below) |
+| Fan curves (generic) | [FanControl](https://github.com/Rem0o/FanControl.Releases) |
+| Hardware monitoring (generic) | [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor) (**read the warning at the end**) |
+| RGB lighting | [OpenRGB](https://openrgb.org) / Windows 11 Dynamic Lighting |
+| Remote game streaming | Steam Link / Moonlight |
 
 ## 1. Project landscape
 
@@ -62,6 +74,6 @@ One concrete feature boundary: OmenXHub's **Dynamic Boost unlock requires an NVI
 
 ---
 
-> ⚠️ Repeat of doc 05's core warning: **before installing any replacement monitoring panel, re-read Case B** — any software polling the GPU on a fixed schedule can become the next "caller leak". Open-source panels are no exception; prefer tools with an adjustable polling interval and set it long.
+> ⚠️ **Read before installing any replacement monitoring panel (this repo's core lesson)**: Case B's mechanism was "a monitor polls the GPU at a fixed cadence → driver allocations outpace frees". **Any** software that queries the GPU on a fixed schedule (RGB effects, FPS overlays, game assistants — including the open-source panels above) can become the next such leak source. Prefer tools with an adjustable polling interval, set it long, or simply install fewer panels. See [Case B](03-case-nvrm-polling-caller.en.md).
 
 Prev: [05 · Remediation & alternatives](05-remediation-and-alternatives.en.md)
