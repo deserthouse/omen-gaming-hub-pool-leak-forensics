@@ -124,7 +124,7 @@ python scripts/rate_probe.py phase1 30 30 --auto 6   # 自动挑 6 个非通用�
 
 ## 证据与表述原则
 
-与作者的另一个取证仓库（[alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)）遵循同一套纪律：
+与作者的另外两个同族取证仓（[alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)、[windows-delivery-optimization-pool-leak-forensics](https://github.com/deserthouse/windows-delivery-optimization-pool-leak-forensics)）遵循同一套纪律：
 
 1. **结论必须带可复现的证据**——每个判断附命令、原始输出或数据表。
 2. **区分三级陈述**：✅ **实测事实**（有落盘原始数据）/ **推断**（由证据合理推出，注明依据）/ ⚠️ **历史观察**（当时见过但未落盘，注明复验方法）。"历史观察"共两处，均已标注：摘要表第 9 条，以及 03 文档内的平坦读数注记。

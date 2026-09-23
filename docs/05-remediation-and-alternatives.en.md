@@ -67,4 +67,4 @@ After uninstalling OGH, some of its features can be covered by community open-so
 
 ---
 
-Prev: [04 · Case C: big blob ≠ leak](04-case-ismc-benign.en.md)
+Prev: [04 · Case C: big blob ≠ leak](04-case-ismc-benign.en.md) ｜ Next: [06 · open-source alternatives appendix](06-open-source-alternatives.en.md)

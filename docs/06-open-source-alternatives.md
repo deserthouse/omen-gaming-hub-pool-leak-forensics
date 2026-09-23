@@ -13,7 +13,7 @@
 
 | 功能位 | 项目 |
 |---|---|
-| 性能模式 / 风扇 / 背光（OMEN 专属） | [OmenMon](https://github.com/OmenMon/OmenMon)（或下表的 OmenSuperHub / OmenXHub） |
+| 性能模式 / 风扇 / 背光（OMEN 专属） | [OmenXHub / OmenSuperHub](https://github.com/MasonDye/OmenXHub)（见下表；[OmenMon](https://github.com/OmenMon/OmenMon) 为早期研究项目、已停更，不建议日用） |
 | 风扇曲线（通用） | [FanControl](https://github.com/Rem0o/FanControl.Releases) |
 | 硬件监控（通用） | [LibreHardwareMonitor](https://github.com/LibreHardwareMonitor/LibreHardwareMonitor)（**先看文末警告**） |
 | RGB 灯光 | [OpenRGB](https://openrgb.org) / Windows 11"动态光效" |
@@ -36,7 +36,7 @@
 
 由此得出三个关键认知：
 
-1. **它们是"OGH 应用层替代品"，不是"驱动替代品"**——不替换、也不移除 HP 的 cap 内核驱动（那几个驱动的池开销实测只有 ~360 KB，本来也不是问题）；
+1. **它们是"OGH 应用层替代品"，不是"驱动替代品"**——不替换、也不移除 HP 的 cap 内核驱动（那几个驱动的池开销实测只有 ~360 KB（本机实测，采集于 OGH 卸载前），本来也不是问题）；
 2. **反而会新增一个内核驱动（PawnIO）**——比 rtf64x64 干净，但确实是多一个；
 3. **与 OGH 互斥**——两者抢同一套 WMI/BIOS 接口，设置互相覆盖。必须先结束/卸载 OGH。
 
@@ -56,7 +56,7 @@
 
 | 维度 | 说明 |
 |---|---|
-| 🟢 用户态内存 | 官方全家桶常驻 ~888 MB 工作集（OGH 292 / HP Cap 140 / 遥测 54 / Light Studio 57…），开源自述 15–25 MB（注意：工作集可换页，非硬性占用） |
+| 🟢 用户态内存 | 官方全家桶常驻 ~888 MB 工作集（本机实测，同一时点快照，OGH 卸载前）（OGH 292 / HP Cap 140 / 遥测 54 / Light Studio 57…），开源自述 15–25 MB（注意：工作集可换页，非硬性占用） |
 | 🟢 遥测/广告/联网 | 开源方案完全离线 |
 | 🟢 控制粒度 | PL1/PL2 步进、IccMax、风扇曲线拖拽、灯光分区动画等，深度远超官方预设 |
 | 🔴 官方独有 | BIOS/驱动更新推送、HP 诊断、保修支持、全系机型兼容 |

@@ -89,4 +89,4 @@ OGH 卸载后，它的部分功能可以用社区开源项目补上——但它�
 
 ---
 
-上一篇：[04 · 案例 C：大块 ≠ 泄漏](04-case-ismc-benign.md)
+上一篇：[04 · 案例 C：大块 ≠ 泄漏](04-case-ismc-benign.md) ｜ 下一篇：[06 · 附录：开源替代项目](06-open-source-alternatives.md)
