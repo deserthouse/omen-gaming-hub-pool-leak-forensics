@@ -124,7 +124,7 @@ python scripts/rate_probe.py phase1 30 30 --auto 6   # auto-pick 6 non-generic t
 
 ## Evidence & statement discipline
 
-Same rules as the author's other repos in this case family ([alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics), [windows-delivery-optimization-pool-leak-forensics](https://github.com/deserthouse/windows-delivery-optimization-pool-leak-forensics)):
+Same rules as the author's other forensics repo ([alibabaprotect-forensics](https://github.com/deserthouse/alibabaprotect-forensics)):
 
 1. **Every conclusion ships with reproducible evidence** — command, raw output, or data table.
 2. **Three statement grades**: ✅ **measured** (persisted raw data) / **inferred** (reasoned from evidence, basis stated) / ⚠️ **historical observation** (seen but not persisted; re-verification method given). There are exactly two historical observations, both labeled: Finding #9 below, plus the flat-reading note inside doc 03.
