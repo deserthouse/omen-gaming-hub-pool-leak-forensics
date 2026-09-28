@@ -6,6 +6,12 @@
 
 **English** · [简体中文](README.zh-CN.md)
 
+> **Statements**
+>
+> This repository contains no human ingredients — see the [AI statement](DISCLAIMER.md#on-ai-assistance).
+>
+> This is an independent technical analysis, not affiliated with HP or the OMEN brand; all scripts in this repository are read-only — see the [Disclaimer](DISCLAIMER.md).
+
 ---
 
 ## Contents
