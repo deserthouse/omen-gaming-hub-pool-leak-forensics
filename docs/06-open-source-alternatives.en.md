@@ -37,7 +37,7 @@ Same route as official OGH: **WMI straight into the HP BIOS** (`SendOmenBiosWmi`
 Three consequences:
 
 1. **They replace the OGH *app layer*, not the drivers** — HP's cap kernel drivers stay (they cost a measured ~360 KB of pool (measured on this machine, pre-OGH-uninstall); they were never the problem);
-2. **They *add* a kernel driver (PawnIO)** — much cleaner than rtf64x64, but it's one more;
+2. **They *add* a kernel driver (PawnIO)** — driver behavior not compared item-by-item, no "cleaner" claim; the established fact is only "one more driver";
 3. **Mutually exclusive with OGH** — both drive the same WMI/BIOS interface and overwrite each other's settings. Stop/uninstall OGH first.
 
 ## 3. Model-support boundaries (the important part)
@@ -57,7 +57,7 @@ One concrete feature boundary: OmenXHub's **Dynamic Boost unlock requires an NVI
 | Dimension | Notes |
 |---|---|
 | 🟢 User-mode memory | official suite resident ~888 MB working set (measured on this machine, single pre-uninstall snapshot) (OGH 292 / HP Cap 140 / telemetry 54 / Light Studio 57…); open-source claims 15–25 MB (working set is pageable, not hard-pinned) |
-| 🟢 Telemetry/ads/networking | open-source is fully offline |
+| 🟢 Telemetry/ads/networking | open-source is not networked by default ("offline" is per-feature qualified — OmenXHub has network-proxy features; not packet-verified) |
 | 🟢 Control granularity | PL1/PL2 stepping, IccMax, draggable fan curves, per-zone lighting — far beyond official presets |
 | 🔴 Official-only | BIOS/driver update pushes, HP diagnostics, warranty support, all-model compatibility |
 | 🟡 Maintenance | community projects; maintainers can go quiet (OmenSuperHub already slowed) |

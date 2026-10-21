@@ -46,7 +46,7 @@ Three-phase rate probe (`scripts/rate_probe.py`, CSV persisted):
 | 12.3-minute window | 59.99 MB | after stopping the process |
 | Follow-up | 59.25 MB | stable at ~59 MB |
 
-Post-remediation `NVRM` held at **~59 MB with no growth**; after reboot it started from a clean baseline with no recurrence (contrast the pre-remediation slope: 1.77 GB over 71 hours).
+Boundary (2026-10-21): all three readings are post-remediation windows — no matched pre-remediation baseline; the archived CSV holds only 3 summary points with headers inconsistent with the current `rate_probe.py` output, so history cannot be rebuilt. Supported conclusion: **NVRM ~59–60 MB without growth in short post-remediation windows**; same-condition causality and multi-day non-recurrence are unverified (the reboot also cleared other state).
 
 ### Historical observation (not persisted)
 
@@ -56,7 +56,7 @@ During the remediation session, **ten consecutive byte-identical readings** were
 
 | Statement | Grade |
 |---|---|
-| OGH's background process was the system's only nvml.dll consumer | **measured** |
+| That tasklist found exactly one nvml.dll holder among visible processes (OGH's background process) | **measured** (module enumeration, not call tracing) |
 | NVRM stopped growing after that process was terminated | **measured** (three-phase data) |
 | The leak was polling-driven (call cadence → allocation rate) | **inferred** (no stack sampling done; "to nail the mechanism you'd want a WPR stack sample", see 01 appendix) |
 | Is the NVIDIA driver "at fault" here? | The driver serves requests; **treat the caller**, leave the driver alone |

@@ -14,7 +14,7 @@
 
 ## 2. The decisive check: does it grow over time
 
-Two snapshots ~1 hour apart:
+Two snapshots (corrected 2026-10-21: these are pre-remediation vs post-remediation-after-reboot — a cross-boot comparison, not one hour within the same boot; the ±4 MB delta is not confirmed as normal pool-fragment jitter):
 
 | Time | ismc usage | Allocations |
 |---|---|---|

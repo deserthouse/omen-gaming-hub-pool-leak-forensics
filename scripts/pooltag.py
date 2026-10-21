@@ -224,8 +224,9 @@ def main():
 
     print()
     print("Reading the table:")
-    print("  FREE%  = nonpaged frees / nonpaged allocs. A LOW value (<90%) means")
-    print("           objects were allocated and never returned -> suspected leak.")
+    print("  FREE%  = nonpaged frees / nonpaged allocs. A LOW value is a LEAD,")
+    print("           not a verdict: long-lived caches can be 0% free; confirm with")
+    print("           same-session growth trend (see docs/01-field-criteria).")
     print("           A HIGH value (~100%) with huge ALLOC is normal churn.")
     print("  NP_BYTES alone tells you nothing about leaking; combine with FREE%.")
     print("  Generic tags (File/Thre/Vad/Even/Irp/Mm*) track system activity and")

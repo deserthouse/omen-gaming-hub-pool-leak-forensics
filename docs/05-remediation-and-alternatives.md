@@ -33,7 +33,7 @@
 - **依据**：案例 B 的泄漏源是 OGH 后台进程对 GPU 的高频轮询（实测：它是全机唯一的 `nvml.dll` 消费者，停掉后泄漏停止，详见 03）。卸载是最彻底的"停掉"。
 - 这一步假设你不需要 OGH 的其他功能；需要保留的，先看第 5 节的替代方案再决定。
 
-> **顺带说明：OMEN Light Studio**（灯光控制，OGH 的同族组件）。它**与本文档的内核池泄漏无关**——两个泄漏源（`RTLF`/`NVRM`）都不是它。笔者卸载它的原因是**用户态 CPU 常驻消耗**：其两个后台进程（`LightStudioHelper`、`LightStudio-background`，合计 64 线程）开机常驻，累计 CPU 时间分别达 2,934 秒与 2,345 秒——而灯光只在设置时需要它，设置完并不需要它持续运行。如果你的灯光方案已经调好、不需要再动，可以连同卸载（同一操作路径搜 "OMEN Light Studio"）；灯效已经写入硬件/驱动的，卸载控制端不影响已保存的灯效。
+> **顺带说明：OMEN Light Studio**（灯光控制，OGH 的同族组件）。在本机排查中未见其参与两个池泄漏源（`RTLF`/`NVRM`）——未做穷尽排除。笔者卸载它的原因是**用户态 CPU 常驻消耗**：其两个后台进程（`LightStudioHelper`、`LightStudio-background`，合计 64 线程）开机常驻，累计 CPU 时间分别达 2,934 秒与 2,345 秒——而灯光只在设置时需要它，设置完并不需要它持续运行。如果你的灯光方案已经调好、不需要再动，可以连同卸载（同一操作路径搜 "OMEN Light Studio"）；灯效已经写入硬件/驱动的，卸载控制端**预期**不影响已保存的灯效（未逐项验证，以你的灯效方案为准）。
 
 ---
 
@@ -59,7 +59,7 @@ sc.exe config rtf64 start= disabled
   sc.exe delete rtf64
   pnputil /delete-driver oem43.inf /uninstall
   ```
-  注意 `oem43.inf` 是本机的编号，你的机器可能不同：先执行 `pnputil /enum-drivers`，在输出里找 Provider 为 Realtek 的那条，用它的"发布名称"替换 `oem43.inf`。
+  注意 `oem43.inf` 是本机的编号，你的机器可能不同。先执行 `pnputil /enum-drivers`，**不要只按 Provider=Realtek 选**（Realtek 可能同时提供网卡/声卡等多个包）：以 **Original Name（原始文件名）= `rtf64x64.inf` 且 Class = NetService** 为主条件，Provider 仅作辅助，再用驱动版本/签名与实际绑定的设备交叉确认；**多条命中或无法唯一确认时停下**，并把选中包的完整信息（原始名/版本/日期）记下来再删，便于事后从驱动仓库或厂商包回退。
 
 ---
 
@@ -77,7 +77,7 @@ python scripts/pooltag.py after.json
 |---|---|
 | `RTLF` | **消失或为 0**（实测对照：处置前 530 MB，处置后 0) |
 | `NVRM` | 还在列表里，但**不再增长**（处置后稳定在约 59 MB；隔一小时再跑一次，两次数值应基本持平） |
-| 网络 | 正常（`rtf64` 是旁路层，禁用它不会断网——见 02 第 5 节的推论 1) |
+| 网络 | **本机处置后正常（单机观察，不构成保证）**。`rtf64` 为 mandatory 过滤器（FilterRunType=1，见 02 第 5 节勘误）——禁用/解绑对网络的影响不能预设为无，动手前备好回退与离线恢复手段 |
 
 ---
 

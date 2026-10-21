@@ -88,7 +88,7 @@ StartType = 1                 ← loaded at system boot (standalone SCM service)
 
 Three corollaries:
 
-1. **`noupper`/`nolower` = pure bypass layer**: whether TCP/IP binds to it doesn't affect connectivity ⇒ disabling it **cannot break the network** — low remediation risk;
+1. `noupper`/`nolower` are **INF interface declarations only** — they do not establish a pure bypass layer (2026-10-21 erratum: the earlier "disabling cannot break the network / low risk" claim is withdrawn; FilterRunType=1 = **mandatory** filter, so the connectivity impact of disabling/unbinding cannot be assumed to be nil — see doc 05 for rollback-first procedure);
 2. **`FilterRunType=1` + `StartType=1`**: it is a **standalone kernel service** registered with SCM, auto-loaded at boot. Unchecking "Realtek LightWeight Filter" in adapter properties only removes the binding — **the service still loads**. This explains the HP-community reports of "uncheck didn't help";
 3. **OGH uninstall leaves it behind**: INF-installed drivers belong to pnputil/the driver store; OGH's uninstaller never touches them.
 
@@ -105,7 +105,7 @@ Post-remediation reboot, re-measured:
 | Metric | Before | After |
 |---|---|---|
 | `RTLF` usage | 530 MB | **0** |
-| Network | — | Normal (bypass layer, as expected) |
+| Network | — | Normal on this machine (single observation; not a guarantee for other machines) |
 
 ## 7. Historical observation (not persisted)
 

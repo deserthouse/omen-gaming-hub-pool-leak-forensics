@@ -57,9 +57,13 @@ HKR, Ndi,FilterRunType, 0x00010001, 1 ;this filter must run before any protocol 
 5. DriverVer = 11/28/2025, 3.15.1128.2025
    → 驱动版本与编译日期（比 HP 社区 2022 年帖提到的 2021 版新，说明仍在更新）。
 
-6. FilterRunType = 1（修正第 1 条解读的补充）
-   → 1 = 可选过滤器（optional filter）。INF 原文注释写的是
-     "this filter must run before any protocol can bind"（必须在协议绑定前运行），
+6. FilterRunType = 1
+   → 【2026-10-21 勘误】此前解读"1 = 可选过滤器（optional filter）"是错误的：
+     按微软 NDIS 文档，FilterRunType 1 = mandatory（必需过滤器——必须在任何协议
+     绑定到下层微型端口之前运行；INF 原文注释 "this filter must run before any
+     protocol can bind" 正是 mandatory 语义）。FilterType 2 = modifying filter。
+     含义：禁用/解绑该过滤器对网络连通性的影响不能预设为"无"（微软文档另说明
+     mandatory 过滤器无法附着时系统可能拆除栈的其余部分）。原始采集值未改动。
      结合 FilterType=2（修改型过滤器）：
      本过滤器的定位是【强制在网络栈最底层拦截/修改帧】。
    ⇒ 处置提醒（重要）：FilterRunType=1 的过滤器【不能只取消绑定】，

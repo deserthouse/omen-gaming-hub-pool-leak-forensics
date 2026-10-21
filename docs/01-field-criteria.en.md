@@ -19,7 +19,7 @@ Measured contrast (same machine, same snapshot):
 
 > Judging by "huge allocation count" alone would falsely identify `cckT` as the leak source — 2.75 billion allocations, but 2.757 billion frees.
 
-**Rule of thumb**: free rate < 90% is highly suspicious; < 50% is near-confirmation. But it **must** be combined with "is it growing over time" (see Case C: 3 allocs / 0 frees can still be a static hold).
+**Boundary (tightened 2026-10-21)**: free rate is a **LEAD with no universal diagnostic threshold** — long-lived caches can sit at 0% free and heavy normal churn can mask a small leak; the previous <90%/<50% rule of thumb is withdrawn. Confirm via same-session net-byte trend, workload, and *when the memory should be freed* (see Case C: 3 allocs / 0 frees can still be a static hold).
 
 ---
 
@@ -43,9 +43,9 @@ The community-standard approach is `findstr /m "TAG" *.sys`. It has two traps, b
 
 `findstr "Cont"` matches every driver containing `Content`, `Control`, … — measured: **579 files**. Four-character tags are too short; naive substring matching guarantees mass false positives.
 
-### Trap 2: first match wins
+### Trap 2: first-match handling (corrected 2026-10-21)
 
-`findstr /m` stops at the first hit. Measured: `NVRM` was once attributed to `nvpcf.sys` — the correct owner is `nvlddmkm.sys` (the 108 MB main driver was skipped).
+`findstr /m` lists **every file with a match** — it does not stop at the first hit (verified with two fixture files). The earlier `NVRM` → `nvpcf.sys` misattribution came from first-match handling in the script, not from `/m` semantics; the current `pooltag.py` collects all hits and reports "unique hit = attributable" — which still means **candidate owner** (unscanned/missing files remain coverage gaps; a constant hit is not an allocation site).
 
 ### The fix (built into `scripts/pooltag.py`)
 

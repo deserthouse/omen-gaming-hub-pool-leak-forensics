@@ -19,7 +19,7 @@ Settings → Apps → Installed apps → search **OMEN Gaming Hub** → Uninstal
 - **Basis**: the Case-B leak source was OGH's background process polling the GPU at a fixed cadence (measured: the system's sole `nvml.dll` consumer; the leak stopped when it stopped — see doc 03). Uninstalling is the most thorough way to stop it.
 - This step assumes you don't need OGH's other features; if you do, review the alternatives in §5 first.
 
-> **A note on OMEN Light Studio** (the RGB control app, same component family as OGH). It was **not** part of the kernel-pool leaks — neither `RTLF` nor `NVRM` traces back to it. The author removed it for a **user-mode CPU** reason: its two background processes (`LightStudioHelper`, `LightStudio-background`, 64 threads combined) run at all times and had accumulated 2,934 s and 2,345 s of CPU time respectively — while lighting only needs the app while you're configuring it. If your lighting is already set and you won't touch it again, you can uninstall it too (same path, search "OMEN Light Studio"); effects already saved to the hardware/driver survive removing the controller.
+> **A note on OMEN Light Studio** (the RGB control app, same component family as OGH). It was not observed participating in either pool-leak source (`RTLF`/`NVRM`) on this machine — not an exhaustive exclusion. The author removed it for a **user-mode CPU** reason: its two background processes (`LightStudioHelper`, `LightStudio-background`, 64 threads combined) run at all times and had accumulated 2,934 s and 2,345 s of CPU time respectively — while lighting only needs the app while you're configuring it. If your lighting is already set and you won't touch it again, you can uninstall it too (same path, search "OMEN Light Studio"); effects already saved to the hardware/driver survive removing the controller.
 
 ---
 
@@ -39,7 +39,7 @@ Then **reboot**. After reboot the driver no longer loads (measured: `RTLF` at ze
   sc.exe delete rtf64
   pnputil /delete-driver oem43.inf /uninstall
   ```
-  (oem43.inf is this machine's number and may differ on yours: find the Realtek-provider entry with `pnputil /enum-drivers` first.)
+  (oem43.inf is this machine's number and may differ on yours. Run `pnputil /enum-drivers` and do NOT select by Provider=Realtek alone — Realtek ships NIC/sound/other packages: match **Original Name = `rtf64x64.inf` and Class = NetService** first, cross-check version/signature and bound devices, and stop if the match is not unique; record the selected package's details for rollback.)
 
 ---
 
@@ -55,7 +55,7 @@ python scripts/pooltag.py after.json
 |---|---|
 | `RTLF` | **absent or 0** (measured contrast: 530 MB before → 0 after) |
 | `NVRM` | present but **no longer growing** (stable at ~59 MB after remediation; re-measure an hour later and compare) |
-| Network | normal (`rtf64` is a bypass layer — disabling it cannot break connectivity — see doc 02 §5 corollary 1) |
+| Network | **normal on this machine after remediation (single observation, not a guarantee)**. `rtf64` is a **mandatory** filter (FilterRunType=1, see the 2026-10-21 erratum in doc 02 §5) — the connectivity impact of disabling/unbinding cannot be assumed to be nil; prepare rollback and offline recovery before acting |
 
 ---
 
