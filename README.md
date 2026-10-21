@@ -1,6 +1,6 @@
 # OMEN Gaming Hub Pool-Leak Forensics
 
-> **Two independent kernel-memory leaks (≈2.3 GB combined; the nonpaged pool peaked at 3.9 GB) associated with OMEN Gaming Hub: one in a network-filter driver it bundles and leaves behind on uninstall, the other tied by a stop-contrast to its background process polling the NVIDIA driver (the driver-side mechanism is inferred). This repo documents the full investigation, criteria, and evidence — plus one counter-example of a large allocation that is not a leak.**
+> **An investigation of unusually high nonpaged-pool usage on one OMEN laptop. It records pool-tag measurements, candidate components, and post-remediation observations. Driver attribution and the proposed polling mechanism are not yet fully established.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
