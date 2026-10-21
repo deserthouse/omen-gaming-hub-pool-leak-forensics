@@ -1,6 +1,6 @@
 # OMEN Gaming Hub Pool-Leak Forensics
 
-> **Two independent kernel-memory leaks (≈2.3 GB combined; the nonpaged pool peaked at 3.9 GB) traced to OMEN Gaming Hub: one in a network-filter driver it bundles and leaves behind on uninstall, the other caused by its background process polling the NVIDIA driver. This repo documents the full investigation, criteria, and evidence — plus one counter-example of a large allocation that is not a leak.**
+> **Two independent kernel-memory leaks (≈2.3 GB combined; the nonpaged pool peaked at 3.9 GB) associated with OMEN Gaming Hub: one in a network-filter driver it bundles and leaves behind on uninstall, the other tied by a stop-contrast to its background process polling the NVIDIA driver (the driver-side mechanism is inferred). This repo documents the full investigation, criteria, and evidence — plus one counter-example of a large allocation that is not a leak.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
@@ -40,10 +40,10 @@ Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control ce
 | Peak | **1.77 GB** (accumulated over 71 h) | **530 MB** |
 | Leaking component | NVIDIA kernel driver (`nvlddmkm`) | Realtek NDIS lightweight filter (`rtf64x64.sys`) |
 | **OGH's role** | **The caller**: its background process was the *only* `nvml.dll` consumer system-wide | **The installer**: shipped it as a Network Booster dependency and doesn't remove it on uninstall |
-| Mechanism | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees | **No process was calling it at all** — the driver leaks on its own |
+| Mechanism | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees (inferred from the only-consumer observation plus the stop-contrast; driver-side allocation paths were not traced) | **No process was calling it at all** (during the capture window) — the driver leaks on its own |
 | Fix | Stop the caller (or uninstall OGH) | Disable/delete the `rtf64` service — unchecking the filter is **not** enough (`FilterRunType=1`, `StartType=1`) |
 
-> ⚠️ **Don't conflate the two**: in Case B the problem is the caller, not the driver; in Case A the driver itself is the problem and OGH merely delivered it.
+> ⚠️ **Don't conflate the two**: in Case B the stop-contrast ties the growth to the caller's polling (driver-side responsibility was not separately assessed); in Case A the driver itself leaks with no caller at all and OGH merely delivered it.
 
 A third tag, `ismc` (317 MB), was proven **not a leak** — yet it is documented too (see doc 04): its free rate is 0%, making it look *more* like a leak than the real ones. Without this counter-example, the free-rate criterion alone would misidentify it.
 
@@ -85,7 +85,7 @@ In the top list: `RTLF`, or `NVRM` that is growing → follow the [remediation g
 | 9 | Device `\Device\RTF64`'s DACL allowed Everyone read/write | pre-remediation session observation (**not persisted**; re-verification method included) | ⚠️ historical observation |
 | 10 | `ismc`'s 317 MB is a static hold (3 allocs / 0 frees, **not growing**) — not a leak | two-point snapshot comparison | ✅ measured |
 
- both leak sources were located and remediated — `RTLF` (530 MB) is a network-filter driver OGH bundles, leaves behind on uninstall, and leaks with no caller at all; `NVRM` (1.77 GB over 71 hours) was caused by OGH's background monitor polling the NVIDIA driver at a fixed cadence. The fix = uninstall OGH + manually disable the rtf64 driver + reboot — see the [remediation guide](docs/05-remediation-and-alternatives.en.md); the third big block, `ismc` (317 MB), is not a leak — leave it alone.
+ both leak sources were located and remediated — `RTLF` (530 MB) is a network-filter driver OGH bundles, leaves behind on uninstall, and leaks with no caller at all; `NVRM` (1.77 GB over 71 hours) tracked OGH's background monitor polling the NVIDIA driver at a fixed cadence (stop-contrast proven; the driver-side mechanism is inferred). The fix = uninstall OGH + manually disable the rtf64 driver + reboot — see the [remediation guide](docs/05-remediation-and-alternatives.en.md); the third big block, `ismc` (317 MB), is not a leak — leave it alone.
 
 ---
 
