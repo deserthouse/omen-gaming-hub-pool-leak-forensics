@@ -1,20 +1,15 @@
 # OMEN Gaming Hub Pool-Leak Forensics
 
-> **An investigation of unusually high nonpaged-pool usage on one OMEN laptop. It records pool-tag measurements, candidate components, and post-remediation observations. Driver attribution and the proposed polling mechanism are not yet fully established.**
+One Windows 11 OMEN laptop reached a 3.9 GB nonpaged pool. This casebook compares the NVRM and RTLF pool tags, the candidate drivers and the readings after mitigation. The proposed polling mechanism remains unconfirmed.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
+[Symptom check](#is-this-the-problem-youre-seeing) · [Findings](#findings-at-a-glance) · [Case documents](#docs)
 
-**English** · [简体中文](README.zh-CN.md)
-
-> **Statements**
->
-> This repository contains no human ingredients — see the [AI statement](DISCLAIMER.md#on-ai-assistance).
->
-> This is an independent technical analysis, not affiliated with HP or the OMEN brand; all scripts in this repository are read-only — see the [Disclaimer](DISCLAIMER.md).
-
----
+**English** · [简体中文](README.zh-CN.md) · [![License: MIT](https://img.shields.io/badge/License-MIT-0078D4.svg)](LICENSE)
 
 ## Contents
+
+<details>
+<summary>Show all sections</summary>
 
 - [What this is](#what-this-is)
 - [Is this the problem you're seeing?](#is-this-the-problem-youre-seeing)
@@ -24,23 +19,25 @@
 - [Evidence & statement discipline](#evidence--statement-discipline)
 - [Disclaimer](#disclaimer)
 
+</details>
+
 ---
 
 ## What this is
 
-> **Note for visitors new to this repo**: this is a troubleshooting casebook for OMEN Gaming Hub memory leaks. **If you just want it fixed: spend one minute on the [symptom check](#is-this-the-problem-youre-seeing), then follow the [remediation guide](docs/05-remediation-and-alternatives.en.md) — what to uninstall, how to remove the leftover driver, and how to verify. No need to read the forensic docs.** For the evidence behind the fix, read docs 01–04. If the command line is unfamiliar, hand this repo's link to your AI assistant and have it walk you through, or execute for you — every step carries expected output to verify against.
+For mitigation steps and follow-up measurements, see the [case guide](docs/05-remediation-and-alternatives.en.md).
 
-An OMEN laptop (i7 / 32 GB / Win11) showed a **3.9 GB nonpaged pool** with no process in Task Manager to explain it, slowly recurring after reboots. This repo documents how the problem was traced to specific drivers **and specific callers**, with the criteria, raw data, and read-only tooling to reproduce the analysis.
+Task Manager showed no process that explained the pool growth. Rebooting reduced the total temporarily.
 
-Both leaks share one entry point: **OMEN Gaming Hub (OGH, HP's gaming control center)** — but their mechanisms are **opposite**:
+The table compares the two pool tags and the current working hypotheses.
 
-| | Case B · polling-caller leak | Case A · orphan-driver leak |
+| | Case B · NVRM growth | Case A · RTLF growth |
 |---|---|---|
 | Pool tag | `NVRM` | `RTLF` |
 | Peak | **1.77 GB** (accumulated over 71 h) | **530 MB** |
-| Leaking component | NVIDIA kernel driver (`nvlddmkm`) | Realtek NDIS lightweight filter (`rtf64x64.sys`) |
+| Candidate component | NVIDIA kernel driver (`nvlddmkm`) | Realtek NDIS lightweight filter (`rtf64x64.sys`) |
 | **OGH's role** | **The caller**: its background process was the *only* `nvml.dll` consumer system-wide | **The installer**: shipped it as a Network Booster dependency and doesn't remove it on uninstall |
-| Mechanism | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees (inferred from the only-consumer observation plus the stop-contrast; driver-side allocation paths were not traced) | **No process was calling it at all** (during the capture window) — the driver leaks on its own |
+| Working hypothesis | The driver serves requests; a monitor polling on a fixed cadence makes allocations outpace frees (inferred from the only-consumer observation plus the stop-contrast; driver-side allocation paths were not traced) | No matching user-mode caller was observed in the sampling window. The allocation path inside the driver remains untraced. |
 | Fix | Stop the caller (or uninstall OGH) | Disable/delete the `rtf64` service — unchecking the filter is **not** enough (`FilterRunType=1`, `StartType=1`) |
 
 > ⚠️ **Don't conflate the two**: in Case B the stop-contrast ties the growth to the caller's polling (driver-side responsibility was not separately assessed); in Case A the driver itself leaks with no caller at all and OGH merely delivered it.
@@ -147,6 +144,10 @@ See [DISCLAIMER.md](DISCLAIMER.md). In short:
 - The author is **not affiliated** with any vendor mentioned.
 - All data comes from **a single machine**; other models/driver versions may differ.
 - Remediation steps modify system services — **assess and create a restore point first**.
+
+## AI disclosure
+
+This project contains no human ingredients. AI assisted with analysis and drafting. The maintainer supplied the device evidence, reviewed the findings and approved publication. [Full disclosure](DISCLAIMER.md#on-ai-assistance).
 
 ## License
 

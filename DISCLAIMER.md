@@ -52,6 +52,6 @@ No vendor affiliation or endorsement. All scripts are read-only. MIT licensed, n
 
 ### On AI assistance
 
-The investigation, evidence handling, and write-up of this repository were produced
+This project contains no human ingredients. The investigation, evidence handling, and write-up of this repository were produced
 with deep AI assistance; research direction, key decisions, and final acceptance
 were the human author's responsibility.
